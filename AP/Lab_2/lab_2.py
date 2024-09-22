@@ -187,9 +187,9 @@ class WorkingStudent(Student, Employee):
         return f"Working {Student.__str__(self)} Also, an {Employee.__str__(self)}"
 
 
-Student("Tom", "Cruise", "Economy", 1, -1)
+Student("Tom", "Cruise", "Economy", 1, 5)
 Student("Cameron", "Diaz", "Medicine", 2, 4)
-Student("Elon", "Musk", "Engineering", 6, 2)
+Student("Elon", "Musk", "Engineering", 3, 2)
 ContractStudent("Andrew", "Lincoln", "Law", 4, 4)
 ContractStudent("Norman", "Reedus", "Pharmacy", 4, 2)
 WorkingStudent("Ryan", "Gosling", "Mechanical Engineering", 4, 3, "Uber", 20000.0)
