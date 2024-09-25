@@ -177,10 +177,10 @@ class Employee:
     def __str__(self):
         return f"Employee at {self.__company} with salary {self.__salary} grn."
 
-class WorkingStudent(Student, Employee):
+class WorkingStudent(ContractStudent, Employee):
 
     def __init__(self, name=None, surname=None, faculty=None, course=1, min_grade=1, company=None, salary=0.0):
-        Student.__init__(self, name, surname, faculty, course, min_grade)
+        ContractStudent.__init__(self, name, surname, faculty, course, min_grade)
         Employee.__init__(self, company, salary)
 
     def __str__(self):
@@ -192,7 +192,7 @@ Student("Cameron", "Diaz", "Medicine", 2, 4)
 Student("Elon", "Musk", "Engineering", 3, 2)
 ContractStudent("Andrew", "Lincoln", "Law", 4, 4)
 ContractStudent("Norman", "Reedus", "Pharmacy", 4, 2)
-WorkingStudent("Ryan", "Gosling", "Mechanical Engineering", 4, 3, "Uber", 20000.0)
+WorkingStudent("Ryan", "Gosling", "Mechanical Engineering", 2, 3, "Uber", 20000.0)
 Student.show_all_students()
 ContractStudent.find_student("Andrew", "Lincoln").pay_contract()
 Student.to_next_course_all()
