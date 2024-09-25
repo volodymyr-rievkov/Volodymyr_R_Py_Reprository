@@ -186,7 +186,6 @@ class WorkingStudent(ContractStudent, Employee):
     def __str__(self):
         return f"Working {Student.__str__(self)} Also, an {Employee.__str__(self)}"
 
-
 Student("Tom", "Cruise", "Economy", 1, 5)
 Student("Cameron", "Diaz", "Medicine", 2, 4)
 Student("Elon", "Musk", "Engineering", 3, 2)
@@ -194,6 +193,7 @@ ContractStudent("Andrew", "Lincoln", "Law", 4, 4)
 ContractStudent("Norman", "Reedus", "Pharmacy", 4, 2)
 WorkingStudent("Ryan", "Gosling", "Mechanical Engineering", 2, 3, "Uber", 20000.0)
 Student.show_all_students()
+
 ContractStudent.find_student("Andrew", "Lincoln").pay_contract()
 Student.to_next_course_all()
 Student.transfer_scholarship_all()
