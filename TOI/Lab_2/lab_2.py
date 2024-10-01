@@ -53,5 +53,3 @@ for i in range(1, 3):
         images_list.append(restored_image)
         restored_image.save("D:\\Programming\\PythonApplications\\TOI\\Lab_2\\restored images\\image_" + str(i + 1) + "_" + method + ".jpg")
     step += 1
-
-
