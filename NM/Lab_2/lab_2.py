@@ -4,6 +4,21 @@ def read_matrix_from_file(file_path):
     matrix = np.loadtxt(file_path, dtype=float)
     return matrix[:, :-1], matrix[:, -1]
 
+def validate_matrix(matrix):
+    if matrix.shape[0] != matrix.shape[1]:
+        print("Error: Matrix is not square.")
+        return False
+    n = len(matrix)
+    if(np.linalg.det(matrix) == 0):
+        print("Matrix determinant equals zero.")
+        return False
+    for i in range(1, n + 1):
+        sub_matrix = matrix[:i, :i]
+        if(np.linalg.det(sub_matrix) == 0):
+            print("Error matrix contains zero minor.")
+            return False
+    return True
+
 def get_l_u_matrices(matrix):
     n = len(matrix) 
     l_matrix = np.zeros((n, n))
@@ -56,26 +71,29 @@ def write_matrix_to_file(matrix, file_path):
         file.write('\n')
         np.savetxt(file, matrix, fmt='%f')
 
-file_path = "D:\\Studing\\Чисельні методи\\Лабораторна робота №2\\file_4.txt"
+file_path = "D:\\Studing\\Чисельні методи\\Лабораторна робота №2\\lab_2_1.txt"
 matrix, b = read_matrix_from_file(file_path)
-print("Matrix:")
-print(matrix)
-print("B:")
-print(b)
-l_matrix, u_matrix = get_l_u_matrices(matrix)
-print("L matrix: ")
-print_rounded_matrix(l_matrix)
-print("U matrix: ")
-print_rounded_matrix(u_matrix)
-print("L * U:")
-print(multiply_matrices(l_matrix, u_matrix))
-y = get_y(b, l_matrix)
-print("Y: ")
-print_rounded_matrix(y)
-x = get_x(y, u_matrix)
-print("X:")
-print_rounded_matrix(x)
-write_matrix_to_file(x, file_path)
-print("Built-in func to solve system of linear equations:")
-print(np.round(np.linalg.solve(matrix, b), 2))
-print(np.round(np.linalg.solve(matrix, b), 2))
+if(validate_matrix(matrix)):
+    print("Matrix:")
+    print(matrix)
+    print("B:")
+    print(b)
+    l_matrix, u_matrix = get_l_u_matrices(matrix)
+    print("L matrix: ")
+    print_rounded_matrix(l_matrix)
+    print("U matrix: ")
+    print_rounded_matrix(u_matrix)
+    print("L * U:")
+    print(multiply_matrices(l_matrix, u_matrix))
+    y = get_y(b, l_matrix)
+    print("Y: ")
+    print_rounded_matrix(y)
+    x = get_x(y, u_matrix)
+    print("X:")
+    print_rounded_matrix(x)
+    write_matrix_to_file(x, file_path)
+    print("Built-in func to solve system of linear equations:")
+    print(np.round(np.linalg.solve(matrix, b), 2))
+else:
+    print("Error: Matrix is not valid!")
+    
