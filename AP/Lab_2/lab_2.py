@@ -1,5 +1,6 @@
-from students import Student, ContractStudent, WorkingStudent
-
+from student import Student
+from contract_student import ContractStudent
+from working_student import WorkingStudent
 
 Student("Tom", "Cruise", "Economy", 1, 5)
 Student("Cameron", "Diaz", "Medicine", 2, 4)

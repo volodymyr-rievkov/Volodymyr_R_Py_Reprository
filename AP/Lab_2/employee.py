@@ -1,6 +1,6 @@
 class Employee:
-    def __init__(self, company=None, salary=0.0):
-        self.__company = company if company is not None else ""
+    def __init__(self, company="", salary=0.0):
+        self.__company = company 
         self.__salary = salary
 
     @property
