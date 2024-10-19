@@ -8,7 +8,7 @@ class Delivery(models.Model):
     street = models.CharField(max_length=50)  
 
     def __str__(self):
-        return f"Delivery id: {self.delivery_id} \nOrder id: {self.order.order_id} \nCountry: {self.country} \nCity: {self.city} \nStreet: {self.street}"
+        return f"Delivery id: {self.delivery_id} \nOrder: \n{self.order} \nCountry: {self.country} \nCity: {self.city} \nStreet: {self.street}"
     
 class Discount(models.Model):
     discount_id = models.AutoField(primary_key=True)  
@@ -16,7 +16,7 @@ class Discount(models.Model):
     discount_value = models.SmallIntegerField()  
 
     def __str__(self):
-        return f"Discount id: {self.discount_id} \nProduct id: {self.product.product_id} \nValue: {self.discount_value}%"
+        return f"Discount id: {self.discount_id} \nProduct: \n{self.product} \nValue: {self.discount_value}%"
     
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)  
@@ -26,14 +26,14 @@ class Order(models.Model):
     order_comment = models.TextField(blank=True, null=True)  
 
     def __str__(self):
-        return f"Order id: {self.order_id} \nUser id: {self.user.user_id} \nProduct id: {self.product.product_id} \nAmount: {self.product_amount} \nComment: {self.order_comment}"
+        return f"Order id: {self.order_id} \nUser: \n{self.user} \nProduct: \n{self.product} \nAmount: {self.product_amount} \nComment: {self.order_comment}"
 
 class OrderHistory(models.Model):
     order = models.ForeignKey('Order', on_delete=models.CASCADE)  
     order_date_time = models.DateTimeField()
 
     def __str__(self):
-        return f"Order id: {self.order.order_id} \nDate/Time: {self.order_date_time}"
+        return f"Order: \n{self.order} \nDate/Time: {self.order_date_time}"
 
 class User(models.Model):
     user_id = models.AutoField(primary_key=True)  
@@ -55,5 +55,4 @@ class Product(models.Model):
     discount = models.ForeignKey('Discount', blank=True, null=True, on_delete=models.SET_NULL)  
 
     def __str__(self):
-        return f"Product id: {self.product_id} \nName: {self.product_name} \nPrice: {self.product_price} \nAmount: {self.product_amount} \nInfo: {self.product_info} \nDiscount id: {self.discount.discount_id if self.discount else 'None'}"
-        
+        return f"Product id: {self.product_id} \nName: {self.product_name} \nPrice: {self.product_price} \nAmount: {self.product_amount} \nInfo: {self.product_info} \nDiscount: {self.discount.discount_value if self.discount else '0.0'}%"
