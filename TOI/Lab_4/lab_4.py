@@ -83,14 +83,14 @@ def print_table_3(decode_list):
         print("|--------|--------------------|---------------|---------------|")
     print()   
 
-message = "Rievkov Volodymyr Volodymyrovych"
-sequence = get_probs_dict(message)
-i_sequence = get_intervals_dict(sequence)
-print_table_1(i_sequence)
-code_m, encoded_m = arithmetic_coding(message, i_sequence)
-print_table_2(encoded_m)
-decoded_m = arithmetic_decoding(code_m, i_sequence, len(message))
-print_table_3(decoded_m)
+# message = "Rievkov Volodymyr Volodymyrovych"
+# sequence = get_probs_dict(message)
+# i_sequence = get_intervals_dict(sequence)
+# print_table_1(i_sequence)
+# code_m, encoded_m = arithmetic_coding(message, i_sequence)
+# print_table_2(encoded_m)
+# decoded_m = arithmetic_decoding(code_m, i_sequence, len(message))
+# print_table_3(decoded_m)
 
 sequence_x = {"X1": 0.10, "X2": 0.09, "X3": 0.19, "X4": 0.10, "X5": 0.04, "X6": 0.13, "X7": 0.08, "X8": 0.10, "X9": 0.09, "X10": 0.08}
 i_sequence_x = get_intervals_dict(sequence_x)
@@ -102,8 +102,8 @@ print_table_2(encoded_m_5)
 decoded_m_5 = arithmetic_decoding(code_m_5, i_sequence_x, len(message_5))
 print_table_3(decoded_m_5)
 
-message_10 = ["X5", "X9", "X2", "X3", "X7", "X2", "X8", "X2", "X10", "X9"]
-code_m_10, encoded_m_10 = arithmetic_coding(message_10, i_sequence_x)
-print_table_2(encoded_m_10)
-decoded_m_10 = arithmetic_decoding(code_m_10, i_sequence_x, len(message_10))
-print_table_3(decoded_m_10)
+# message_10 = ["X5", "X9", "X2", "X3", "X7", "X2", "X8", "X2", "X10", "X9"]
+# code_m_10, encoded_m_10 = arithmetic_coding(message_10, i_sequence_x)
+# print_table_2(encoded_m_10)
+# decoded_m_10 = arithmetic_decoding(code_m_10, i_sequence_x, len(message_10))
+# print_table_3(decoded_m_10)
