@@ -1,6 +1,6 @@
-from app.models import Order
-from app.models import User
-from app.models import Product
+from app.models.order import Order
+from app.models.user import User
+from app.models.product import Product
 from app.repositories.i_repository import IRepository
 from django.utils import timezone
 
@@ -37,22 +37,26 @@ class OrderRepository(IRepository):
             print(f"Error: Product with id: {product_id} does not exist.")
             return None
 
-    def __validate_amount(self, amount):
+    def __validate_amount(self, amount, p_amount):
         if(amount <= 0):
             print("Error: Amount can not be negative.")
             return False
+        elif(amount > p_amount):
+            print(f"Error: Amount can not be more than '{p_amount}'.")
+            return False   
         return True
 
     def create(self, user_id, product_id, o_amount, o_comment=None):
-        user = self.__validate_user(self, user_id)
+        user = self.__validate_user(user_id)
         if(not user):
             return None
         product = self.__validate_product(product_id, o_amount)
         if (not product):
             return None 
-        if(not self.__validate_amount(o_amount)):
+        if(not self.__validate_amount(o_amount, product.amount)):
             return None
         total = product.price * o_amount
+        product.amount -= o_amount
         order = Order(
             user = user,
             product = product,

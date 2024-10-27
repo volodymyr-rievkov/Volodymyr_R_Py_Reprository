@@ -1,5 +1,5 @@
-from app.models import Delivery
-from app.models import Order
+from app.models.delivery import Delivery
+from app.models.order import Order
 from app.repositories.i_repository import IRepository
 from django.db import IntegrityError
 
