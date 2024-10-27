@@ -1,4 +1,4 @@
-from app.models import Discount
+from app.models.discount import Discount
 from app.repositories.i_repository import IRepository
 from django.db import IntegrityError
 

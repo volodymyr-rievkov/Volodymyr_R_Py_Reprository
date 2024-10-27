@@ -1,4 +1,4 @@
-from app.models import User
+from app.models.user import User
 from app.repositories.i_repository import IRepository
 
 class UserRepository(IRepository):
