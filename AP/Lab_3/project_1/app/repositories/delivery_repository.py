@@ -4,6 +4,10 @@ from app.repositories.i_repository import IRepository
 from django.db import IntegrityError
 
 class DeliveryRepository(IRepository):
+
+    def get_all(self):
+        return Delivery.objects.all()
+
     def show_all(self):
         deliveries = Delivery.objects.all()
         for delivery in deliveries:
@@ -25,15 +29,15 @@ class DeliveryRepository(IRepository):
             print(f"Error: Order with id: {order_id} does not exist.")
             return None  
 
-    def create(self, order_id, d_country, d_city, d_street):
+    def create(self, order_id, country, city, street):
         order = self.__validate_order_exists(order_id)
         if (not order):
             return None
         delivery = Delivery(
             order = order,
-            country = d_country,
-            city = d_city,
-            street = d_street
+            country = country,
+            city = city,
+            street = street
         )
         try:
             delivery.save()  
@@ -42,3 +46,15 @@ class DeliveryRepository(IRepository):
             print(f"Error: Delivery for order {order_id} already exists.")
             return None  
     
+    def update(self, delivery, order_id=None, country=None, city=None, street=None):
+        if (order_id is not None):
+            delivery.order_id = order_id
+        if (country is not None):
+            delivery.country = country
+        if (city is not None):
+            delivery.city = city
+        if (street is not None):
+            delivery.street = street
+        
+        delivery.save()
+        return delivery

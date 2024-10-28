@@ -2,6 +2,10 @@ from app.models.user import User
 from app.repositories.i_repository import IRepository
 
 class UserRepository(IRepository):
+    
+    def get_all(self):
+        return User.objects.all()
+
     def show_all(self):
         users = User.objects.all()
         for user in users:
@@ -34,21 +38,34 @@ class UserRepository(IRepository):
             return False
         return True
 
-    def create(self, u_first_name, u_last_name, u_phone_number, u_email, u_password):
-        if (not self.__is_email_unique(u_email)):
+    def create(self, first_name, last_name, phone_number, email, password):
+        if (not self.__is_email_unique(email)):
             return None
-        if (not self.__is_phone_number_unique(u_phone_number)):
+        if (not self.__is_phone_number_unique(phone_number)):
             return None
-        if (not self.__is_password_unique(u_password)):
+        if (not self.__is_password_unique(password)):
             return None
         user = User(
-            first_name = u_first_name, 
-            last_name = u_last_name,
-            phone_number = u_phone_number,
-            email = u_email,
-            password = u_password
+            first_name = first_name, 
+            last_name = last_name,
+            phone_number = phone_number,
+            email = email,
+            password = password
         )
         user.save()
         return user
 
-    
+    def update(self, user, first_name=None, last_name=None, phone_number=None, email=None, password=None):
+        if (first_name is not None):
+            user.first_name = first_name
+        if (last_name is not None):
+            user.last_name = last_name
+        if (phone_number is not None):
+            user.phone_number = phone_number
+        if (email is not None):
+            user.email = email
+        if (password is not None):
+            user.password = password  
+        
+        user.save()
+        return user

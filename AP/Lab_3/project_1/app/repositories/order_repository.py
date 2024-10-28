@@ -5,6 +5,10 @@ from app.repositories.i_repository import IRepository
 from django.utils import timezone
 
 class OrderRepository(IRepository):
+
+    def get_all(self):
+        return Order.objects.all()
+
     def show_all(self):
         orders = Order.objects.all()
         for order in orders:
@@ -46,25 +50,37 @@ class OrderRepository(IRepository):
             return False   
         return True
 
-    def create(self, user_id, product_id, o_amount, o_comment=None):
+    def create(self, user_id, product_id, amount, comment=None):
         user = self.__validate_user(user_id)
         if(not user):
             return None
-        product = self.__validate_product(product_id, o_amount)
+        product = self.__validate_product(product_id, amount)
         if (not product):
             return None 
-        if(not self.__validate_amount(o_amount, product.amount)):
+        if(not self.__validate_amount(amount, product.amount)):
             return None
-        total = product.price * o_amount
-        product.amount -= o_amount
+        total = product.price * amount
+        product.amount -= amount
         order = Order(
             user = user,
             product = product,
-            amount = o_amount,
+            amount = amount,
             date_time = timezone.now(),
-            comment = o_comment,
+            comment = comment,
             total_price = total
         )
         order.save()
         return order
     
+    def update(self, order, user_id=None, product_id=None, amount=None, comment=None):
+        if (user_id is not None):
+            order.user_id = user_id
+        if (product_id is not None):
+            order.product_id = product_id
+        if (amount is not None):
+            order.amount = amount
+        if (comment is not None):
+            order.comment = comment
+        
+        order.save()
+        return order

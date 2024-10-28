@@ -3,6 +3,10 @@ from app.repositories.i_repository import IRepository
 from django.db import IntegrityError
 
 class DiscountRepository(IRepository):
+
+    def get_all(self):
+        return Discount.objects.all()
+
     def show_all(self):
         discounts = Discount.objects.all()
         for discount in discounts:
@@ -23,15 +27,22 @@ class DiscountRepository(IRepository):
             return False
         return True
 
-    def create(self, d_value):
-        if (not self.__validate_discount_value(d_value)):
+    def create(self, value):
+        if (not self.__validate_discount_value(value)):
             return None
         discount = Discount(
-            value = d_value
+            value = value
         )
         try:
             discount.save()
             return discount
         except IntegrityError:
-            print(f"Error: A discount with value {d_value}% already exists.")
+            print(f"Error: A discount with value {value}% already exists.")
             return None
+
+    def update(self, discount, value=None):
+        if (value is not None):
+            discount.value = value
+        
+        discount.save()
+        return discount
