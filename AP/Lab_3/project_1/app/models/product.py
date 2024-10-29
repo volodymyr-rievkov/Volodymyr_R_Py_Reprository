@@ -2,6 +2,7 @@ from django.db import models
 from app.models.discount import Discount
 
 class Product(models.Model):
+    
     id = models.AutoField(primary_key=True, db_column="id")      
     name = models.CharField(max_length=50, unique=True, db_column="name")  
     info = models.TextField(blank=True, null=True, db_column="info")  
