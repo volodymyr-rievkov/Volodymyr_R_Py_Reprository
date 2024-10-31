@@ -1,5 +1,51 @@
 import numpy as np
 
+def get_l_u_matrices(matrix):
+    n = len(matrix) 
+    l_matrix = np.zeros((n, n))
+    u_matrix = np.zeros((n, n))
+    for s in range(n):
+        for j in range(s, n):
+            sum = 0
+            for k in range(s):
+                sum += l_matrix[s][k] * u_matrix[k][j]
+            u_matrix[s][j] = matrix[s][j] - sum
+        for i in range(s, n):
+            if(s == i):
+                l_matrix[s][s] = 1
+            else:
+                sum = 0
+                for k in range(s):
+                    sum += l_matrix[i][k] * u_matrix[k][s]
+                l_matrix[i][s] = (matrix[i][s] - sum) / u_matrix[s][s]
+    return l_matrix, u_matrix
+
+def get_y(b, l_matrix):
+    n = len(b)
+    y = np.zeros_like(b)
+    for i in range(n):
+        sum = 0
+        for s in range(i):
+            sum += l_matrix[i][s] * y[s]
+        y[i] = b[i] - sum
+    return y
+
+def get_x(y, u_matrix):
+    n = len(y)
+    x = np.zeros_like(y)
+    for i in range(n - 1, -1, -1):
+        sum = 0
+        for s in range(i + 1, n):
+            sum += u_matrix[i][s] * x[s]
+        x[i] = (y[i] - sum) / u_matrix[i][i]
+    return x
+
+def l_u_method(matrix, b):
+    l_matrix, u_matrix = get_l_u_matrices(matrix)
+    y = get_y(b, l_matrix)
+    x = get_x(y, u_matrix)
+    return x
+
 def read_matrix_from_file(file_path):
     return np.loadtxt(file_path, dtype=int)
 
@@ -15,30 +61,29 @@ def sp_inverse_iteration_method(matrix, tolerance):
         print("Error: Matrix is singular(det = 0).")
         return None, None
     if(not is_symmetric(matrix)):
-        print("Warning: Matrix is not symmetric.")
-        y = np.ones(n, dtype = complex)
-    else:
-        y = np.ones(n)
+        print("Warning: Matrix is not symmetric, eigens may be complex.")
+    
+    y = np.ones(n)
+        
     lambda_old = 0
     iterations = 1
     y_norm = np.linalg.norm(y)
     x = y / y_norm
 
     while True:
-        y = np.linalg.solve(matrix, x)
-        s = np.dot(y.conj().T, y)
-        t = np.dot(y.conj().T, x)
-        lambda_new = t / s
+        y = l_u_method(matrix, x)
+        s = np.dot(y.conj(), y)
+        t = np.dot(y.conj(), x)
         y_norm = np.linalg.norm(y)
-
+        x = y / y_norm
+        lambda_new = t / s
         if(abs(lambda_new - lambda_old) < tolerance):
             print("Number of iterations:", iterations)
             break
 
         lambda_old = lambda_new
-        x = y / y_norm
         iterations += 1
-    return lambda_new, y 
+    return lambda_new, x 
 
 def check(matrix, value, vector):
     matrix_vec = np.dot(matrix, vector)
@@ -46,7 +91,7 @@ def check(matrix, value, vector):
     print("Statement 'matrix * vector = value * vector':")
     print(f"{np.round(matrix_vec, 3)} = {np.round(value_vec, 3)}")
 
-file_path = "D:\\Studing\\Чисельні методи\\Лабораторна робота №4\\lab_4_2.txt"
+file_path = "D:\\Studing\\Чисельні методи\\Лабораторна робота №4\\lab_4_1.txt"
 
 matrix = read_matrix_from_file(file_path)
 TOLERANCE = 1e-6
