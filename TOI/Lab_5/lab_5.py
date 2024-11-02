@@ -1,6 +1,5 @@
 
 def lz78_encode(message):
-
     dictionary = dict()
     dict_index = 1
     string = ""
@@ -23,6 +22,7 @@ def lz78_encode(message):
         dictionary[value] = (dict_index, (dictionary[string][0], "EOF"))
 
     return dictionary
+
 
 def calculate_average_length(dictionary):
     total_length = sum(len(value) for value in dictionary.keys())
