@@ -1,10 +1,15 @@
 from app.repository_factory import RepositoryFactory
 from app.views.report_view.report_view_interface import IReportView
+
 from django.db.models import Avg, Max, Min, Count
 from django.http import JsonResponse
+
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 class ProductReportView(APIView, IReportView):
+
+    permission_classes = [IsAuthenticated]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

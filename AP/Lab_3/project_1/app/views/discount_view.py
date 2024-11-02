@@ -1,12 +1,16 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
 from app.views.view_interface import IView
 from app.repository_factory import RepositoryFactory
 from app.serializers.discount_serializer import DiscountSerializer
 
 class DiscountView(APIView, IView):
     
+    permission_classes = [IsAuthenticated]
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.repo = RepositoryFactory.discount_repo()
