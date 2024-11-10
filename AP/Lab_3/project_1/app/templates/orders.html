@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>Orders:</h1>
+    
+    <ul>
+        {% for order in orders %}
+            <li>
+                <strong class="data">{{ order.id }}</strong> 
+                <div class="data">Total Price: {{ order.total_price }}</div>
+                <a href="{% url 'Order' order.id %}">Show details</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2 class = 'data'>Add new order</h2>
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div>
+            <label class = 'data' for="user_id">User id:</label>
+            <input class = '_input'  type="number" name="user_id" id="user_id" required>
+        </div>
+        
+        <div>
+            <label class = 'data'for="product_id">Product id:</label>
+            <input class = '_input'  type="number" name="product_id" id="product_id" required>
+        </div>
+        
+        <div>
+            <label class = 'data'for="amount">Amount:</label>
+            <input class = '_input'  type="number" name="amount" id="amount" required>
+        </div>
+        
+        <div>
+            <label class = 'data'for="comment">Comment:</label>
+            <input class = '_input' type="text" name="comment" id="comment">
+        </div>
+        
+        <div>
+            <button class="button_submit" type="submit">Add order</button>
+        </div>
+    </form>
+
+    <br>
+    <a href="{% url 'Home' %}" class="back_link">Back to home</a>
+</body>
+</html>
