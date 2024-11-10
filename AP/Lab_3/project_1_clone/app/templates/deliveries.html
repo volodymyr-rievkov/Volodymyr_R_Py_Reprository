@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>Delivery:</h1>
+
+    <ul>
+        {% for delivery in deliveries %}
+            <li>
+                <div class="data">Delivery id: {{ delivery.id }}</div>  
+                <a href="{% url 'Delivery' delivery.id %}">Show details</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2 class="data">Add New Delivery</h2>
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div>
+            <label class="data" for="order_id">Order id:</label>
+            <input class="_input" type="number" name="order_id" id="order_id" required>
+        </div>
+
+        <div>
+            <label class="data" for="country">Country:</label>
+            <input class="_input" type="text" name="country" id="country" required>
+        </div>
+
+        <div>
+            <label class="data" for="city">City:</label>
+            <input class="_input" type="text" name="city" id="city" required>
+        </div>
+
+        <div>
+            <label class="data" for="street">Street:</label>
+            <input class="_input" type="text" name="street" id="street" required>
+        </div>
+
+        <div>
+            <button class="button_submit" type="submit">Add Delivery</button>
+        </div>
+    </form>
+
+    <br>
+
+    <a href="{% url 'Home' %}" class="back_link">Back to home</a>
+</body>
+</html>

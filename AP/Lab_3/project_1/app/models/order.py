@@ -8,7 +8,7 @@ class Order(models.Model):
     amount = models.SmallIntegerField(db_column="product_amount") 
     comment = models.TextField(blank=True, null=True, db_column="comment") 
     date_time = models.DateTimeField(db_column="date_time")  
-    total_price = models.DecimalField(max_digits=10, max_length=2, db_column="total_price")
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, db_column="total_price")
 
     class Meta:
         managed = False

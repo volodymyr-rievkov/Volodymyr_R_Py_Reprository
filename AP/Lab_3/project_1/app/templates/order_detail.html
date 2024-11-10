@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order details</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>Order details</h1>
+
+    <p><strong class="data">Order id:</strong> <span class="data">{{ order.id }}</span></p>
+    <p><strong class="data">User id:</strong> <span class="data">{{ order.user.id }}</span></p>
+    <p><strong class="data">First name:</strong> <span class="data">{{ order.user.first_name }}</span></p>
+    <p><strong class="data">Last name:</strong> <span class="data">{{ order.user.last_name }}</span></p>
+    <p><strong class="data">Product id:</strong> <span class="data">{{ order.product.id }}</span></p>
+    <p><strong class="data">Product name:</strong> <span class="data">{{ order.product.name }}</span></p>
+    <p><strong class="data">Product price:</strong> <span class="data">{{ order.product.price }}</span></p>
+    <p><strong class="data">Amount:</strong> <span class="data">{{ order.amount }}</span></p>
+    <p><strong class="data">Comment:</strong> <span class="data">{{ order.comment }}</span></p>
+    <p><strong class="data">Total price:</strong> <span class="data">{{ order.total_price }}</span></p>
+    <p><strong class="data">Date time:</strong> <span class="data">{{ order.date_time }}</span></p>
+    <br>
+    <h2 class='data'>Edit Order</h2>
+    <form method="POST" action="{% url 'Order' order.id %}">
+        {% csrf_token %}
+        
+        <div>
+            <label class='data' for="user_id">User id:</label>
+            <input class='_input' type="number" name="user_id" id="user_id" value="{{ order.user_id }}">
+        </div>
+        
+        <div>
+            <label class='data' for="product_id">Product id:</label>
+            <input class='_input' type="number" name="product_id" id="product_id" value="{{ order.product_id }}">
+        </div>
+        
+        <div>
+            <label class='data' for="amount">Amount:</label>
+            <input class='_input' type="number" name="amount" id="amount" value="{{ order.amount }}">
+        </div>
+        
+        <div>
+            <label class='data' for="comment">Comment:</label>
+            <input class='_input' type="text" name="comment" id="comment" value="{{ order.comment }}">
+        </div>
+        
+        <button class="button_submit" type="submit">Edit</button>
+    </form>
+    <br>
+    <br>
+    <form method="POST" action="{% url 'Order' order.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="_method" value="DELETE">
+        <button class="button_delete" type="submit">Delete</button>
+    </form>
+    <br>
+    <a href="{% url 'Orders list' %}">Back to orders</a>
+</body>
+</html>
