@@ -10,10 +10,6 @@ class Product(models.Model):
     amount = models.IntegerField(db_column="amount")  
     discount = models.ForeignKey('Discount', blank=True, on_delete=models.SET_NULL, db_column="discount_id", null=True)  
 
-    # class Meta:
-    #     managed = False
-    #     db_table = 'product'
-
     def __get_discount_value(self):
         try:
             return self.discount.value if self.discount else 0.0

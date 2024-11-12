@@ -7,9 +7,11 @@ class UserPageView(TemplateView):
 
     template_name = 'users.html'
 
+    def __init__(self):
+        self.repo = RepositoryFactory.user_repo()
+
     def get(self, request):
-        repo = RepositoryFactory.user_repo()
-        users = repo.get_all()
+        users = self.repo.get_all()
         return render(request, self.template_name, {'users': users})
     
     def post(self, request):
@@ -21,9 +23,8 @@ class UserPageView(TemplateView):
         password = request.POST.get('password')
 
         if(first_name and last_name and phone_number and email and password):
-            repo = RepositoryFactory.user_repo()
             try:
-                repo.create(first_name=first_name, last_name=last_name, phone_number=phone_number, email=email, password=password)
+                self.repo.create(first_name=first_name, last_name=last_name, phone_number=phone_number, email=email, password=password)
                 return redirect('Users list')
             except OperationalError as e:
                 return redirect('Users list')

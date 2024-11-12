@@ -7,19 +7,20 @@ class DiscountPageView(TemplateView):
 
     template_name = 'discounts.html'
 
+    def __init__(self):
+        self.repo = RepositoryFactory.discount_repo()
+
     def get(self, request):
-        repo = RepositoryFactory.discount_repo()
-        discounts = repo.get_all()
+        discounts = self.repo.get_all()
         return render(request, self.template_name, {'discounts': discounts})
     
     def post(self, request):
         value = request.POST.get('value')
 
         if value:
-            repo = RepositoryFactory.discount_repo()
             try:
                 value_int = int(value)
-                repo.create(value=value_int)
+                self.repo.create(value=value_int)
                 return redirect('Discounts list')
             except OperationalError as e:
                 return redirect('Discounts list')

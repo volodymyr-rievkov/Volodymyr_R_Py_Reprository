@@ -12,8 +12,7 @@ class DiscountDetailPageView(TemplateView):
         self.repo = RepositoryFactory.discount_repo()
 
     def get(self, request, id):
-        repo = RepositoryFactory.discount_repo()
-        discount = repo.get_by_id(id)
+        discount = self.repo.get_by_id(id)
         if not discount:
             raise Http404("Error: Discount not found.")
         return render(request, self.template_name, {'discount': discount})
@@ -31,12 +30,9 @@ class DiscountDetailPageView(TemplateView):
     def edit(self, request, discount):
         value = request.POST.get('value')
 
-        if value:
-            discount.value = value
-
         self.repo.update(discount, value=value)
         return redirect(reverse('Discount', args=[discount.id]))
 
     def delete(self, request, discount):
         discount.delete()
-        return redirect(reverse('Discounts list'))
+        return redirect('Discounts list')

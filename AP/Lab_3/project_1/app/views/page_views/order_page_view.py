@@ -7,9 +7,11 @@ class OrderPageView(TemplateView):
     
     template_name = 'orders.html'
 
+    def __init__(self):
+        self.repo = RepositoryFactory.order_repo() 
+
     def get(self, request):
-        repo = RepositoryFactory.order_repo()  
-        orders = repo.get_all()  
+        orders = self.repo.get_all()  
         return render(request, self.template_name, {'orders': orders})
 
     def post(self, request):
@@ -25,9 +27,8 @@ class OrderPageView(TemplateView):
                 amount = int(amount)
             except ValueError:
                 return redirect('Orders list')
-            repo = RepositoryFactory.order_repo()
             try:
-                repo.create(user_id=user_id, product_id=product_id, amount=amount, comment=comment)
+                self.repo.create(user_id=user_id, product_id=product_id, amount=amount, comment=comment)
                 return redirect('Orders list')
             except OperationalError:
                 return redirect('Orders list')

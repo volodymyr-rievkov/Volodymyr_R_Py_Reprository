@@ -7,9 +7,11 @@ class DeliveryPageView(TemplateView):
 
     template_name = 'deliveries.html'
 
+    def __init__(self):
+        self.repo = RepositoryFactory.delivery_repo()
+
     def get(self, request):
-        repo = RepositoryFactory.delivery_repo()
-        deliveries = repo.get_all()
+        deliveries = self.repo.get_all()
         return render(request, self.template_name, {'deliveries': deliveries})
     
     def post(self, request):
@@ -20,9 +22,8 @@ class DeliveryPageView(TemplateView):
         street = request.POST.get('street')
 
         if(order_id and country and city and street):
-            repo = RepositoryFactory.delivery_repo()
             try:
-                repo.create(order_id=order_id, country=country, city=city, street=street)
+                self.repo.create(order_id=order_id, country=country, city=city, street=street)
                 return redirect('Deliveries list')
             except OperationalError as e:
                 return redirect('Deliveries list')
