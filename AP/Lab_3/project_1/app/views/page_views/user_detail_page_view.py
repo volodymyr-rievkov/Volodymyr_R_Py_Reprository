@@ -5,14 +5,14 @@ from app.repository_factory import RepositoryFactory
 from django.http import Http404
 
 class UserDetailPageView(TemplateView):
+
     template_name = 'user_detail.html'
 
     def __init__(self):
         self.repo = RepositoryFactory.user_repo()
 
     def get(self, request, id):
-        repo = RepositoryFactory.user_repo()
-        user = repo.get_by_id(id)
+        user = self.repo.get_by_id(id)
         if (not user):
             raise Http404("Error: User not found.")
         return render(request, self.template_name, {'user': user})
@@ -34,20 +34,9 @@ class UserDetailPageView(TemplateView):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        if first_name:
-            user.first_name = first_name
-        if last_name:
-            user.last_name = last_name
-        if phone_number:
-            user.phone_number = phone_number
-        if email:
-            user.email = email
-        if password:
-            user.password = password
-
         self.repo.update(user, first_name=first_name, last_name=last_name, phone_number=phone_number, email=email, password=password)
         return redirect(reverse('User', args=[user.id]))
 
     def delete(self, request, user):
         user.delete()
-        return redirect(reverse('Users list'))
+        return redirect('Users list')

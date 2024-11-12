@@ -33,18 +33,9 @@ class OrderDetailPageView(TemplateView):
         amount = request.POST.get('amount')
         comment = request.POST.get('comment')
 
-        if user_id:
-            order.user_id = user_id
-        if product_id:
-            order.product_id = product_id
-        if amount:
-            order.amount = amount
-        if comment:
-            order.comment = comment
-
         self.repo.update(order, user_id=user_id, product_id=product_id, amount=amount, comment=comment)
         return redirect(reverse('Order', args=[order.id]))  
 
     def delete(self, request, order):
         order.delete() 
-        return redirect(reverse('Orders list'))  
+        return redirect('Orders list')  

@@ -1,18 +1,24 @@
 from django.urls import path
 
 from app.views.page_views.home_page_view import HomePageView
+
 from app.views.page_views.user_page_view import UserPageView
 from app.views.page_views.user_detail_page_view import UserDetailPageView
+
 from app.views.page_views.product_page_view import ProductPageView
 from app.views.page_views.product_detail_page_view import ProductDetailPageView
+
 from app.views.page_views.order_page_view import OrderPageView
 from app.views.page_views.order_detail_page_view import OrderDetailPageView
+
 from app.views.page_views.discount_page_view import DiscountPageView
 from app.views.page_views.discount_detail_page_view import DiscountDetailPageView
+
 from app.views.page_views.delivery_page_view import DeliveryPageView
 from app.views.page_views.deilvery_detail_page_view import DeliveryDetailPageView
 
-
+from app.views.page_views.user_page_view_nh import UserPageViewNH
+from app.views.page_views.user_detail_page_view_nh import UserDetailPageViewNH
 
 urlpatterns = [
 
@@ -24,7 +30,6 @@ urlpatterns = [
     path('products/', ProductPageView.as_view(), name='Products list'),  
     path('products/<int:id>/', ProductDetailPageView.as_view(), name='Product'),
 
-
     path('orders/', OrderPageView.as_view(), name='Orders list'),  
     path('orders/<int:id>/', OrderDetailPageView.as_view(), name='Order'),
 
@@ -33,4 +38,7 @@ urlpatterns = [
 
     path('deliveries/', DeliveryPageView.as_view(), name='Deliveries list'),
     path('deliveries/<int:id>/', DeliveryDetailPageView.as_view(), name='Delivery'),
+
+    path('users_nh/', UserPageViewNH.as_view(), name='Users list nh'),
+    path('users_nh/<int:id>/', UserDetailPageViewNH.as_view(), name='User nh')
 ]

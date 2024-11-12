@@ -7,9 +7,11 @@ class ProductPageView(TemplateView):
 
     template_name = 'products.html'
 
+    def __init__(self):
+        self.repo = RepositoryFactory.product_repo()
+
     def get(self, request):
-        repo = RepositoryFactory.product_repo()
-        products = repo.get_all()
+        products = self.repo.get_all()
         return render(request, self.template_name, {'products': products})
     
     def post(self, request):
@@ -35,9 +37,8 @@ class ProductPageView(TemplateView):
                     return redirect('Products list') 
             else:
                 discount_id = None  
-            repo = RepositoryFactory.product_repo()
             try:
-                repo.create(name=name, price=price, amount=amount, info=info, discount_id=discount_id)
+                self.repo.create(name=name, price=price, amount=amount, info=info, discount_id=discount_id)
                 return redirect('Products list')
             except OperationalError as e:
                 return redirect('Products list')  

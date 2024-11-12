@@ -3,7 +3,7 @@ from django.db import models
 class Delivery(models.Model):
     
     id = models.AutoField(primary_key=True, db_column="id")  
-    order = models.ForeignKey('Order', on_delete=models.CASCADE, unique=True, db_column="order_id")  
+    order = models.OneToOneField('Order', on_delete=models.CASCADE, unique=True, db_column="order_id")  
     country = models.CharField(max_length=50, db_column="country")  
     city = models.CharField(max_length=50, db_column="city")  
     street = models.CharField(max_length=50, db_column="street")  

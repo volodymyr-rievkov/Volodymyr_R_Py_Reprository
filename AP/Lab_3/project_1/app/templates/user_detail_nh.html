@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User details</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>User details</h1>
+    <p><strong class="data">User id:</strong> <span class="data">{{ user.id }}</span></p>
+    <p><strong class="data">First name:</strong> <span class="data">{{ user.first_name }}</span></p>
+    <p><strong class="data">Last name:</strong> <span class="data">{{ user.last_name }}</span></p>
+    <p><strong class="data">Phone number:</strong> <span class="data">{{ user.phone_number }}</span></p>
+    <p><strong class="data">Email:</strong> <span class="data">{{ user.email }}</span></p>
+    <p><strong class="data">Password:</strong> <span class="data">{{ user.password }}</span></p>
+    <br>
+    
+    <form method="POST" action="{% url 'User nh' user.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="_method" value="DELETE">
+        <button class="button_delete" type="submit">Delete</button>
+    </form>
+    
+    <br>
+    <a href="{% url 'Users list nh' %}">Back to users</a>
+</body>
+</html>
