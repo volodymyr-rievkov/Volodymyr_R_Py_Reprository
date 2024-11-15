@@ -1,28 +1,43 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
+from app.error_messages import ErrorMessages
+from requests.auth import HTTPBasicAuth
 from django.views.generic import TemplateView
-from app.repository_factory import RepositoryFactory
-from django.db import OperationalError
+import requests
 
 class DiscountPageView(TemplateView):
 
     template_name = 'discounts.html'
 
     def __init__(self):
-        self.repo = RepositoryFactory.discount_repo()
+        self.api_url = "http://127.0.0.1:8000/discounts_api/"
+        self.username = 'Volodymyr'
+        self.password = 'volodymyr'
 
     def get(self, request):
-        discounts = self.repo.get_all()
-        return render(request, self.template_name, {'discounts': discounts})
+        try:
+            response = requests.get(self.api_url, auth=HTTPBasicAuth(self.username, self.password))
+            if response.status_code == 200:
+                discounts = response.json()
+                return render(request, self.template_name, {'discounts': discounts})
+            else:
+                return redirect(f'{reverse("Error")}?error_message={ErrorMessages.OBJECTS_NOT_FOUND}')
+        except requests.exceptions.RequestException as e:
+            return redirect(f'{reverse("Error")}?error_message={e}')
     
     def post(self, request):
-        value = request.POST.get('value')
+        discounts_data = {
+            'value': request.POST.get('value')
+        } 
 
-        if value:
+        if discounts_data['value']:
             try:
-                value_int = int(value)
-                self.repo.create(value=value_int)
-                return redirect('Discounts list')
-            except OperationalError as e:
-                return redirect('Discounts list')
+                response = requests.post(self.api_url, data=discounts_data, auth=HTTPBasicAuth(self.username, self.password))                
+                if response.status_code == 201:  
+                    return redirect('Discounts list')
+                else:
+                    return redirect(f'{reverse("Error")}?error_message={ErrorMessages.CREATE_FAILED}')
+            except requests.exceptions.RequestException as e:
+                return redirect(f'{reverse("Error")}?error_message={e}') 
         else:
-            return redirect('Discounts list')
+            return redirect(f'{reverse("Error")}?error_message={ErrorMessages.NOT_ENOUGH_ARGUMENTS}')

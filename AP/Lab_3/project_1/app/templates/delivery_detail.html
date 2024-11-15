@@ -10,16 +10,15 @@
 <body>
     <h1>Delivery details</h1>
     <p><strong class="data">Delivery id:</strong> <span class="data">{{ delivery.id }}</span></p>
-    <p><strong class="data">Order id:</strong> <span class="data">{{ delivery.order.id }}</span></p>
-    <p><strong class="data">First name:</strong> <span class="data">{{ delivery.order.user.first_name }}</span></p>
-    <p><strong class="data">Last name:</strong> <span class="data">{{ delivery.order.user.last_name }}</span></p>
-    <p><strong class="data">Product id:</strong> <span class="data">{{ delivery.order.product.id }}</span></p>
-    <p><strong class="data">Product name</strong> <span class="data">{{ delivery.order.product.name }}</span></p>
-    <p><strong class="data">Product price</strong> <span class="data">{{ delivery.order.product.price }}</span></p>
-    <p><strong class="data">Product amount:</strong> <span class="data">{{ delivery.order.product.amount }}</span></p>
-    <p><strong class="data">Total price:</strong> <span class="data">{{ delivery.order.total_price }}</span></p>
-    <p><strong class="data">Date time:</strong> <span class="data">{{ delivery.order.date_time }}</span></p>
-    <p><strong class="data">Order id:</strong> <span class="data">{{ delivery.order.id }}</span></p>
+    <p><strong class="data">Order id:</strong> <span class="data">{{ order.id }}</span></p>
+    <p><strong class="data">First name:</strong> <span class="data">{{ user.first_name }}</span></p>
+    <p><strong class="data">Last name:</strong> <span class="data">{{ user.last_name }}</span></p>
+    <p><strong class="data">Product id:</strong> <span class="data">{{ product.id }}</span></p>
+    <p><strong class="data">Product name</strong> <span class="data">{{ product.name }}</span></p>
+    <p><strong class="data">Product price</strong> <span class="data">{{ product.price }}</span></p>
+    <p><strong class="data">Product amount:</strong> <span class="data">{{ product.amount }}</span></p>
+    <p><strong class="data">Total price:</strong> <span class="data">{{ order.total_price }}</span></p>
+    <p><strong class="data">Date time:</strong> <span class="data">{{ order.date_time }}</span></p>
     <p><strong class="data">Country:</strong> <span class="data">{{ delivery.country }}</span></p>
     <p><strong class="data">City:</strong> <span class="data">{{ delivery.city }}</span></p>
     <p><strong class="data">Street:</strong> <span class="data">{{ delivery.street }}</span></p>
@@ -30,8 +29,8 @@
         {% csrf_token %}
         
         <div>
-            <label class="data" for="order_id">Order id:</label>
-            <input class="_input" type="number" name="order_id" id="order_id" value="{{ delivery.order.id }}" readonly>
+            <label class="data" for="order">Order id:</label>
+            <input class="_input" type="number" name="order" id="order" value="{{ order.id }}">
         </div>
         
         <div>

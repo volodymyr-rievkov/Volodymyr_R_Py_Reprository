@@ -180,59 +180,53 @@ def check_berger_code(code_word):
     return check_part == expected_check_bits
 
 
-def get_control_bits_amount(n):
-    r = 0
-    while (2 ** r) < (int(n) + r + 1):
-        r += 1
-    return r
-
-def insert_bits_val(word, r):
-    j = 0
-    k = 1
-    m = len(word)
-    res = ""
-    for i in range(1, m + r + 1):
-        if(i == 2 ** j):
-            res = res + '0'
-            j += 1
-        else:
-            res = res + word[-1 * k]
-            k += 1
-
-    return res[::-1]
-
-def insert_control_bits_val(word, r):
-    n = len(word)
-    for i in range(r):
-        val = 0
-        for j in range(1, n + 1):
-            if(j & (2**i) == (2**i)):
-                val = val ^ int(word[-1 * j])
-        word = word[:n-(2**i)] + str(val) + word[n-(2**i)+1:]
-    return word
-
 def add_hamming_code(word):
     n = len(word)
-    global r 
-    r = get_control_bits_amount(n)
-    code_word = insert_bits_val(word, r)
-    code_word = insert_control_bits_val(code_word, r)
-    return code_word
+    r = 1
+    while 2**r < n + r + 1:
+        r += 1
+    
+    hamming_code = ['0'] * (n + r)
+    j = 0
+    k = 0
+    for i in range(1, len(hamming_code) + 1):
+
+        if (i & (i - 1)) == 0:
+            continue
+        hamming_code[i - 1] = word[j]
+        j += 1
+    
+    for i in range(r):
+        parity_bit_pos = 2**i
+        parity_value = 0
+        for j in range(1, len(hamming_code) + 1):
+            if j & parity_bit_pos:
+                parity_value ^= int(hamming_code[j - 1])
+        hamming_code[parity_bit_pos - 1] = str(parity_value)
+    
+    return ''.join(hamming_code)
 
 def check_hamming_code(code_word):
     n = len(code_word)
-    res = 0
-    for i in range(r):
-        val = 0
-        for j in range(1, n + 1):
-            if(j & (2**i) == (2**i)):
-                val = val ^ int(code_word[-1 * j])
-        res = res + val*(10**i)
-    if (res == 0):
-        return "True"
-    else:
-        return int(str(res), 2)
+    r = 1
+    while 2**r < n + 1:
+        r += 1
     
+    error_pos = 0
+    for i in range(r):
+        parity_bit_pos = 2**i
+        parity_value = 0
+        for j in range(1, len(code_word) + 1):
+            if j & parity_bit_pos:
+                parity_value ^= int(code_word[j - 1])
+        if parity_value != 0:
+            error_pos += parity_bit_pos
+    
+    if error_pos != 0:
+        return error_pos - 1
+    
+    return True 
+
 
 def run_program(code_dict, type):
     if(type == 1):

@@ -14,8 +14,8 @@
     <p><strong class="data">Info:</strong> <span class="data">{{ product.info }}</span></p>
     <p><strong class="data">Price:</strong> <span class="data">{{ product.price }}</span></p>
     <p><strong class="data">Amount:</strong> <span class="data">{{ product.amount }}</span></p>
-    <p><strong class="data">Discount id:</strong> <span class="data">{{ product.discount.id }}</span></p>
-    <p><strong class="data">Discount value:</strong> <span class="data">{{ product.discount.value }}</span></p>
+    <p><strong class="data">Discount id:</strong> <span class="data">{{ product.discount_id }}</span></p>
+    <p><strong class="data">Discount value:</strong> <span class="data">{{ discount.value }}</span></p>
     <br>
     
     <h2 class="data">Edit product</h2>
@@ -44,7 +44,7 @@
             
         <div>
             <label class="data" for="discount">Discount id:</label>
-            <input class="_input" type="number" name="discount" id="discount" value="{{ product.discount.id }}">
+            <input class="_input" type="number" name="discount" id="discount" value="{{ product.discount_id }}">
         </div>
         
         <button class="button_submit" type="submit">Edit</button>

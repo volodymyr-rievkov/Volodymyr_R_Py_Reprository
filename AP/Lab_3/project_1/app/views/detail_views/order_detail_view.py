@@ -36,8 +36,8 @@ class OrderDetailView(APIView, IDetailView):
         if (serializer.is_valid()):
             updated_order = self.repo.update(
                 order,
-                user_id=serializer.validated_data.get('user_id'),
-                product_id=serializer.validated_data.get('product_id'),
+                user=serializer.validated_data.get('user_id'),
+                product=serializer.validated_data.get('product_id'),
                 amount=serializer.validated_data.get('amount'),
                 comment=serializer.validated_data.get('comment')
             )

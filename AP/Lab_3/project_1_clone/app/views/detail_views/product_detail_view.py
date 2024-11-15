@@ -40,7 +40,7 @@ class ProductDetailView(APIView, IDetailView):
                 price=serializer.validated_data.get('price'),
                 amount=serializer.validated_data.get('amount'),
                 info=serializer.validated_data.get('info'),
-                disocunt_id=serializer.validated_data.get('discount_id')
+                discount_id=serializer.validated_data.get('discount_id')
             )
             return Response(
                 ProductSerializer(updated_product).data, 

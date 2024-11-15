@@ -8,7 +8,7 @@ class Product(models.Model):
     info = models.TextField(blank=True, null=True, db_column="info")  
     price = models.DecimalField(max_digits=10, decimal_places=2, db_column="price")  
     amount = models.IntegerField(db_column="amount")  
-    discount = models.ForeignKey('Discount', blank=True, null=True, on_delete=models.SET_NULL, db_column="discount_id")  
+    discount_id = models.ForeignKey('Discount', blank=True, null=True, on_delete=models.SET_NULL, db_column="discount_id")  
 
     class Meta:
         managed = False
@@ -16,7 +16,7 @@ class Product(models.Model):
 
     def __get_discount_value(self):
         try:
-            return self.discount.value if self.discount else 0.0
+            return self.discount_id.value if self.discount_id else 0.0
         except Discount.DoesNotExist:
             return 0.0
         
