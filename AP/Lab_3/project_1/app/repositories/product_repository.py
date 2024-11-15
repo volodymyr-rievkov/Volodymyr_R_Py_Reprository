@@ -65,11 +65,11 @@ class ProductRepository(IRepository):
         if (discount_id is not None):
             product.discount_id = discount_id
             discount_repo = DiscountRepository()
-            discount = discount_repo.get_by_id(discount_id)
+            discount = discount_repo.get_by_id(discount_id.id)
             if (discount):
                 try:
                     price = float(price)  
-                    discount_value = float(discount.value) 
+                    discount_value = int(discount.value) 
                     price = price - (price * (discount_value / 100))
                 except (ValueError, TypeError) as e:
                     pass

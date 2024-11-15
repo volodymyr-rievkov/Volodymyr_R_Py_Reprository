@@ -30,8 +30,8 @@ class DeliveryRepository(IRepository):
             print(f"Error: Order with id: {order_id} does not exist.")
             return None  
 
-    def create(self, order_id, country, city, street):
-        order = self.__validate_order_exists(order_id)
+    def create(self, order, country, city, street):
+        order = self.__validate_order_exists(order.id)
         if (not order):
             return None
         delivery = Delivery(
@@ -44,12 +44,12 @@ class DeliveryRepository(IRepository):
             delivery.save()  
             return delivery
         except IntegrityError:
-            print(f"Error: Delivery for order {order_id} already exists.")
+            print(f"Error: Delivery for order {order} already exists.")
             return None  
     
-    def update(self, delivery, order_id=None, country=None, city=None, street=None):
-        if (order_id is not None):
-            delivery.order_id = order_id
+    def update(self, delivery, order=None, country=None, city=None, street=None):
+        if (order is not None):
+            delivery.order_id = order
         if (country is not None):
             delivery.country = country
         if (city is not None):

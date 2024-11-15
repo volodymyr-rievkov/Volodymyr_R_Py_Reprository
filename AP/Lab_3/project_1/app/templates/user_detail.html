@@ -32,7 +32,7 @@
         </div>
             
         <div>
-            <label class="data" for="phone_number">Phone number:</label>
+            <label class="data" for="phone_number">Phone number(13):</label>
             <input class="_input" type="text" name="phone_number" id="phone_number" value="{{ user.phone_number }}">
         </div>
             
@@ -51,7 +51,7 @@
     
     <br><br>
     
-    <form method="POST" action="{% url 'User' user.id %}">
+    <form method="POST" action="{% url 'User' user.id %}" id="delete_form">
         {% csrf_token %}
         <input type="hidden" name="_method" value="DELETE">
         <button class="button_delete" type="submit">Delete</button>

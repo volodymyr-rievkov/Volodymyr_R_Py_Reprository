@@ -11,12 +11,12 @@
     <h1>Order details</h1>
 
     <p><strong class="data">Order id:</strong> <span class="data">{{ order.id }}</span></p>
-    <p><strong class="data">User id:</strong> <span class="data">{{ order.user.id }}</span></p>
-    <p><strong class="data">First name:</strong> <span class="data">{{ order.user.first_name }}</span></p>
-    <p><strong class="data">Last name:</strong> <span class="data">{{ order.user.last_name }}</span></p>
-    <p><strong class="data">Product id:</strong> <span class="data">{{ order.product.id }}</span></p>
-    <p><strong class="data">Product name:</strong> <span class="data">{{ order.product.name }}</span></p>
-    <p><strong class="data">Product price:</strong> <span class="data">{{ order.product.price }}</span></p>
+    <p><strong class="data">User id:</strong> <span class="data">{{ user.id }}</span></p>
+    <p><strong class="data">First name:</strong> <span class="data">{{ user.first_name }}</span></p>
+    <p><strong class="data">Last name:</strong> <span class="data">{{ user.last_name }}</span></p>
+    <p><strong class="data">Product id:</strong> <span class="data">{{ product.id }}</span></p>
+    <p><strong class="data">Product name:</strong> <span class="data">{{ product.name }}</span></p>
+    <p><strong class="data">Product price:</strong> <span class="data">{{ product.price }}</span></p>
     <p><strong class="data">Amount:</strong> <span class="data">{{ order.amount }}</span></p>
     <p><strong class="data">Comment:</strong> <span class="data">{{ order.comment }}</span></p>
     <p><strong class="data">Total price:</strong> <span class="data">{{ order.total_price }}</span></p>
@@ -28,12 +28,12 @@
         
         <div>
             <label class='data' for="user_id">User id:</label>
-            <input class='_input' type="number" name="user_id" id="user_id" value="{{ order.user_id }}">
+            <input class='_input' type="number" name="user_id" id="user_id" value="{{ order.user }}">
         </div>
         
         <div>
             <label class='data' for="product_id">Product id:</label>
-            <input class='_input' type="number" name="product_id" id="product_id" value="{{ order.product_id }}">
+            <input class='_input' type="number" name="product_id" id="product_id" value="{{ order.product }}">
         </div>
         
         <div>

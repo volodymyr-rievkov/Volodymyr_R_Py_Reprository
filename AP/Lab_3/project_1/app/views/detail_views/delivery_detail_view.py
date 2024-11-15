@@ -36,7 +36,7 @@ class DeliveryDetailView(APIView, IDetailView):
         if (serializer.is_valid()):
             updated_delivery = self.repo.update(
                 deilvery,
-                order_id=serializer.validated_data.get('order_id'),
+                order=serializer.validated_data.get('order'),
                 country=serializer.validated_data.get('country'),
                 city=serializer.validated_data.get('city'),
                 street=serializer.validated_data.get('street')

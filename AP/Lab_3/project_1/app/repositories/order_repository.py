@@ -53,11 +53,11 @@ class OrderRepository(IRepository):
             return False   
         return True
 
-    def create(self, user_id, product_id, amount, comment=None):
-        user = self.__validate_user(user_id)
+    def create(self, user, product, amount, date_time, total_price, comment=None):
+        user = self.__validate_user(user.id)
         if(not user):
             return None
-        product = self.__validate_product(product_id, amount)
+        product = self.__validate_product(product.id, amount)
         if (not product):
             return None 
         if(not self.__validate_amount(amount, product.amount)):
@@ -68,18 +68,18 @@ class OrderRepository(IRepository):
             user = user,
             product = product,
             amount = amount,
-            date_time = timezone.now(),
             comment = comment,
+            date_time = date_time,
             total_price = total
         )
         order.save()
         return order
     
-    def update(self, order, user_id=None, product_id=None, amount=None, comment=None):
-        if (user_id is not None):
-            order.user_id = user_id
-        if (product_id is not None):
-            order.product_id = product_id
+    def update(self, order, user=None, product=None, amount=None, comment=None):
+        if (user is not None):
+            order.user_id = user
+        if (product is not None):
+            order.product_id = product
         if (amount is not None):
             order.amount = amount
             product_repo = ProductRepository()  

@@ -1,41 +1,78 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
-from app.repository_factory import RepositoryFactory
-from django.http import Http404
+import requests
+from django.utils import timezone
+from requests.auth import HTTPBasicAuth
+from app.error_messages import ErrorMessages
 
 class OrderDetailPageView(TemplateView):
 
     template_name = 'order_detail.html'
 
     def __init__(self):
-        self.repo = RepositoryFactory.order_repo() 
+        self.api_url = "http://127.0.0.1:8000/orders_api/"
+        self.users_api_url = "http://127.0.0.1:8000/users_api/"
+        self.products_api_url = "http://127.0.0.1:8000/products_api/"
+        self.username = "Volodymyr"
+        self.password = "volodymyr"
 
     def get(self, request, id):
-        order = self.repo.get_by_id(id)  
-        if not order:
-            raise Http404("Error: Order not found.")
-        return render(request, self.template_name, {'order': order})
+        try:
+            response = requests.get(f"{self.api_url}{id}/", auth=HTTPBasicAuth(self.username, self.password))
+            if response.status_code == 200:
+                order = response.json()
+                user_responde = requests.get(f"{self.users_api_url}{order['user']}/", auth=HTTPBasicAuth(self.username, self.password))
+                user = user_responde.json()
+                product_responde = requests.get(f"{self.products_api_url}{order['product']}/", auth=HTTPBasicAuth(self.username, self.password))
+                product = product_responde.json()
+                return render(request, self.template_name, {'order': order, 'product': product, 'user': user})
+            else:
+                return redirect(f'{reverse("Error")}?error_message={ErrorMessages.OBJECT_NOT_FOUND}')
+        except requests.exceptions.RequestException as e:
+            return redirect(f'{reverse("Error")}?error_message={e}')
 
     def post(self, request, id):
-        order = self.repo.get_by_id(id)
-        if not order:
-            raise Http404("Error: Order not found.")
-        
-        if '_method' in request.POST and request.POST['_method'] == 'DELETE':
-            return self.delete(request, order)
-        
-        return self.edit(request, order)
+        try:
+            response = requests.get(f"{self.api_url}{id}/", auth=HTTPBasicAuth(self.username, self.password))
+            if response.status_code != 200:
+                return redirect(f'{reverse("Error")}?error_message={ErrorMessages.OBJECT_NOT_FOUND}')
+            
+            order = response.json()
+
+            if '_method' in request.POST and request.POST['_method'] == 'DELETE':
+                return self.delete(request, order)
+
+            return self.edit(request, order)
+
+        except requests.exceptions.RequestException as e:
+            return redirect(f'{reverse("Error")}?error_message={e}')
 
     def edit(self, request, order):
-        user_id = request.POST.get('user_id')
-        product_id = request.POST.get('product_id')
-        amount = request.POST.get('amount')
-        comment = request.POST.get('comment')
+        order_data = {
+            "user": request.POST.get('user_id'),
+            "product": request.POST.get('product_id'),
+            "amount": request.POST.get('amount'),
+            "comment": request.POST.get('comment'),
+            "date_time": timezone.now(),
+            "total_price": 0.0
+        }
 
-        self.repo.update(order, user_id=user_id, product_id=product_id, amount=amount, comment=comment)
-        return redirect(reverse('Order', args=[order.id]))  
+        try:
+            response = requests.put(f"{self.api_url}{order['id']}/", data=order_data, auth=HTTPBasicAuth(self.username, self.password))
+            if response.status_code == 200:
+                return redirect(reverse('Order', args=[order['id']]))
+            else:
+                return redirect(f'{reverse("Error")}?error_message={ErrorMessages.UPDATE_FAILED}')
+        except requests.exceptions.RequestException as e:
+            return redirect(f'{reverse("Error")}?error_message={e}')
 
     def delete(self, request, order):
-        order.delete() 
-        return redirect('Orders list')  
+        try:
+            response = requests.delete(f"{self.api_url}{order['id']}/", auth=HTTPBasicAuth(self.username, self.password))
+            if response.status_code == 204:
+                return redirect('Orders list')
+            else:
+                return redirect(f'{reverse("Error")}?error_message={ErrorMessages.DELETE_FAILED}')
+        except requests.exceptions.RequestException as e:
+            return redirect(f'{reverse("Error")}?error_message={e}')

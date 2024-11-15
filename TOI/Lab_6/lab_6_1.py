@@ -50,6 +50,8 @@ x_entropy = get_x_entropy(x_pos)
 x_y_cond_entropy = get_x_y_full_cond_entropy(x_y_pos, y_pos)
 
 i_y_x = x_entropy - x_y_cond_entropy
+C = round(i_y_x, 2)
 
 print("Average information amount I(Y,X):", i_y_x)
+print("Channel's information capacity: ", C)
 
