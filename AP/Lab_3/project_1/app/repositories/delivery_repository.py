@@ -59,3 +59,14 @@ class DeliveryRepository(IRepository):
         
         delivery.save()
         return delivery
+
+    @staticmethod
+    def get_delivery_info_by_order_value_above():
+        return Delivery.objects.filter(
+            order__total_price__gt=500  
+        ).values(
+            'country', 
+            'city', 
+            'order__user__first_name',  
+            'order__user__last_name'    
+        )

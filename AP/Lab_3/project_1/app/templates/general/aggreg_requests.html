@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggregational requests</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>Aggregational requests</h1>
+    <ul>
+        <li><a href="{% url 'Deliveries due to order' %}">Delivery info by order with total value above 500</a></li>
+        <li><a href="{% url 'Users with total' %}">Users total spent</a></li>
+        <li><a href="{% url 'Top products' %}">Top products</a></li>
+        <li><a href="{% url 'Users with discount' %}">Users with discount orders</a></li>
+        <li><a href="{% url 'Orders revenue over' %}">Orders with revevnue over 500</a></li>
+        <li><a href="{% url 'Products discount above' %}">Products with discounts above 10%</a></li>
+        <li><a href="{% url 'Home' %}">Back to home</a></li>
+    </ul>
+
+</body>
+</html>

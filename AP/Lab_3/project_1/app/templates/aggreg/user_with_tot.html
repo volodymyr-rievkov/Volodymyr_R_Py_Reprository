@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Total Spent</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>Users Total Spent:</h1>
+    <ul>
+        {% for user in users %}
+            <li class="data">
+                <strongs>{{ user.user__first_name }} {{ user.user__last_name }}</strong>
+                with total spent: {{ user.total_spent }} 
+            </li>
+        {% endfor %}
+    </ul>
+    <br>
+    <a href="{% url 'Aggreg requests' %}" class="back_link">Back to Requests</a>
+</body>
+</html>
