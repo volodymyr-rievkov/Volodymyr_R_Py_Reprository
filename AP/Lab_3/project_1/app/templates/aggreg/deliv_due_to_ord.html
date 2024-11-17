@@ -5,11 +5,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Info by Order with Total Value Above 500</title>
+    <title>Delivery Info by Order Expenses Above 500</title>
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
-    <h1>Delivery Info by Order with Total Value Above 500:</h1>
+    <h1>Delivery Info by Order Expenses Above 500:</h1>
     <center>
         <table border="1">
             <thead>
@@ -19,7 +19,7 @@
                     <th>City</th>
                     <th>First Name</th>
                     <th>Last Name</th>
-                    <th>Total value</th>
+                    <th>Expenses</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,7 +51,7 @@
         <thead>
             <tr class="data">
                 <th>Country</th>
-                <th>Average Total Price</th>
+                <th>Average Expenses</th>
             </tr>
         </thead>
         <tbody>
@@ -64,6 +64,10 @@
         </tbody>
     </table>
     </center>
+    <br>
+    <br>
+    <a href="{% url 'Delivery dashboard v1' %}" class="back_link">Go to dasboard V1</a>
+    <br>
     <br>
     <a href="{% url 'Aggreg requests' %}" class="back_link">Back to Requests</a>
 </body>
