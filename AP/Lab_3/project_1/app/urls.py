@@ -51,6 +51,9 @@ from app.views.page_views.aggreg.users_total_spent_p_view import UsersWithTotalP
 from app.views.agreg_views.users_with_discount_above_view import UsersWithDscntAboveView
 from app.views.page_views.aggreg.users_with_discount_above_p_view import UsersWithDscntAbovePView
 
+from app.views.dashboard_views.delivery_dashboard_v1_view import DelivDashboardV1View
+from app.views.dashboard_views.user_dashboard_v1_view import UserDashboardV1View
+
 
 urlpatterns = [
 
@@ -97,6 +100,7 @@ urlpatterns = [
 
     path('deliveries_due_to_order_api/', DelivsDueOrderView.as_view(), name="Deliveries due to order Api"),
     path('deliveries_due_to_order/', DelivsDueOrderPView.as_view(), name="Deliveries due to order"),
+    path('delivery_dashboard_v1', DelivDashboardV1View.as_view(), name="Delivery dashboard v1"),
 
     path('products_discount_above_api/', ProdsWithDscntsView.as_view(), name="Products discount above Api"),
     path('products_discount_above/', ProdsWithDscntsPView.as_view(), name="Products discount above"),
@@ -109,6 +113,7 @@ urlpatterns = [
 
     path('user_with_discount_api/', UsersWithDscntAboveView.as_view(), name="Users with discount Api"),
     path('user_with_discount/', UsersWithDscntAbovePView.as_view(), name="Users with discount"),
+    path('user_dashboard_v1/', UserDashboardV1View.as_view(), name='User dashboard v1'),
 ]
 
 
