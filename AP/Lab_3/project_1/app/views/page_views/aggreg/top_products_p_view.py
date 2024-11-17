@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 import requests
 from requests.auth import HTTPBasicAuth 
 from app.error_messages import ErrorMessages
+import pandas as pd
 
 class TopProdsPView(TemplateView):
     template_name = 'aggreg/top_prod.html'
@@ -17,8 +18,17 @@ class TopProdsPView(TemplateView):
         try:
             response = requests.get(self.api_url, auth=HTTPBasicAuth(self.username, self.password))
             if response.status_code == 200:
-                products = response.json()
-                return render(request, self.template_name, {'products': products})
+                products = pd.DataFrame(response.json())
+                print("-" * 20)
+                print(products)
+                print("-" * 20)
+                stats = {
+                    "max": products['total_orders'].max(),
+                    "min": products['total_orders'].min(),
+                    "avg": products['total_orders'].mean(),
+                    "median": products['total_orders'].median()
+                }
+                return render(request, self.template_name, {'products': products.reset_index().to_dict(orient="records"), 'stats': stats})
             else:
                 return redirect(f'{reverse("Error")}?error_message={ErrorMessages.OBJECTS_NOT_FOUND}')
         except requests.exceptions.RequestException as e:

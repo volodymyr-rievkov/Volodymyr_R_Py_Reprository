@@ -10,23 +10,34 @@
 <body>
     <h1>Products with Discounts Above 10%:</h1>
     <center>
-        <table>
+        <table border="1">
             <thead>
-                <tr>
-                    <th class="data">Product Name</th>
-                    <th class="data">Price</th>
+                <tr class="data">
+                    <th>Index</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
                 </tr>
             </thead>
             <tbody>
                 {% for product in products %}
-                    <tr>
-                        <td class="data">{{ product.name }}</td>
-                        <td class="data">{{ product.price }}</td>
+                    <tr class="data">
+                        <td align="center">{{ product.index }}</td>
+                        <td align="center">{{ product.name }}</td>
+                        <td align="center">{{ product.price }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </center>
+    <br>
+    <div class="statistics" class="data">
+        <h3>Statistics:</h3>
+        <p><strong>Max:</strong> {{ stats.max|floatformat:2 }}</p>
+        <p><strong>Min:</strong> {{ stats.min|floatformat:2 }}</p>
+        <p><strong>Avg:</strong> {{ stats.avg|floatformat:2 }}</p>
+        <p><strong>Median:</strong> {{ stats.median|floatformat:2 }}</p>
+    </div>
+
     <br>
     <a href="{% url 'Aggreg requests' %}" class="back_link">Back to Requests</a>
 </body>
