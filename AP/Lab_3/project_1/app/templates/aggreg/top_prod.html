@@ -10,23 +10,34 @@
 <body>
     <h1>Top Ordered Products:</h1>
     <center>
-        <table>
+        <table border="1">
             <thead>
-                <tr>
-                    <th class="data">Product</th>
-                    <th class="data">Total Orders</th>
+                <tr class="data">
+                    <th>Index</th>
+                    <th>Product</th>
+                    <th>Total Orders</th>
                 </tr>
             </thead>
             <tbody>
                 {% for product in products %}
-                    <tr>
-                        <td class="data">{{ product.product__name }}</td>
-                        <td align="center" class="data">{{ product.total_orders }}</td>
+                    <tr class="data">
+                        <td align="center">{{ product.index }}</td>
+                        <td align="center">{{ product.product__name }}</td>
+                        <td align="center">{{ product.total_orders }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </center>
+    <br>
+    <div class="statistics" class="data">
+        <h3>Statistics:</h3>
+        <p><strong>Max:</strong> {{ stats.max|floatformat:2 }}</p>
+        <p><strong>Min:</strong> {{ stats.min|floatformat:2 }}</p>
+        <p><strong>Avg:</strong> {{ stats.avg|floatformat:2 }}</p>
+        <p><strong>Median:</strong> {{ stats.median|floatformat:2 }}</p>
+    </div>
+
     <br>
     <a href="{% url 'Aggreg requests' %}" class="back_link">Back to Requests</a>
 </body>

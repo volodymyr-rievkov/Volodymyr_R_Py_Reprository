@@ -68,5 +68,6 @@ class DeliveryRepository(IRepository):
             'country', 
             'city', 
             'order__user__first_name',  
-            'order__user__last_name'    
+            'order__user__last_name',
+            'order__total_price'    
         )

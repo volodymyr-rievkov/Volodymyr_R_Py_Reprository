@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -9,20 +10,62 @@
 </head>
 <body>
     <h1>Delivery Info by Order with Total Value Above 500:</h1>
-    
-    <ul>
-        {% for info in infos %}
-            <li class="data">
-                <strong>
-                    {{ info.order__user__first_name }} {{ info.order__user__last_name }}
-                </strong> -
-                {{ info.city }}, {{ info.country }}
-            </li>
-        {% endfor %}
-    </ul>
-    
+    <center>
+        <table border="1">
+            <thead>
+                <tr class="data">
+                    <th>Index</th>
+                    <th>Country</th>
+                    <th>City</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Total value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for info in infos %}
+                    <tr class="data">
+                        <td align="center">{{ info.index }}</td>
+                        <td align="center">{{ info.country }}</td>
+                        <td align="center">{{ info.city }}</td>
+                        <td align="center">{{ info.order__user__first_name }}</td>
+                        <td align="center">{{ info.order__user__last_name }}</td>
+                        <td align="center">{{info.order__total_price}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </center>
     <br>
-
+    <div class="statistics" class="data">
+        <h3>Statistics:</h3>
+        <p><strong>Max:</strong> {{ stats.max|floatformat:2 }}</p>
+        <p><strong>Min:</strong> {{ stats.min|floatformat:2 }}</p>
+        <p><strong>Avg:</strong> {{ stats.avg|floatformat:2 }}</p>
+        <p><strong>Median:</strong> {{ stats.median|floatformat:2 }}</p>
+    </div>
+    <br>
+    <h1>Average Expenses by Country</h1>
+    <center></center>
+    <table border="1">
+        <thead>
+            <tr class="data">
+                <th>Country</th>
+                <th>Average Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in avg_expenses %}
+                <tr class="data">
+                    <td align="center">{{ row.country }}</td>
+                    <td align="center">{{ row.average_total_price|floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </center>
+    <br>
     <a href="{% url 'Aggreg requests' %}" class="back_link">Back to Requests</a>
 </body>
 </html>
+

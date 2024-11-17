@@ -114,6 +114,6 @@ class OrderRepository(IRepository):
 
     @staticmethod
     def get_orders_with_revenue_over():
-        return Order.objects.values('user__first_name', 'user__last_name', 'total_price').annotate(
+        return Order.objects.values('user__first_name', 'user__last_name').annotate(
             total_spent=Sum('total_price')
         ).filter(total_spent__gt=500).order_by('-total_spent')

@@ -9,16 +9,63 @@
 </head>
 <body>
     <h1>Users with Discounted Orders:</h1>
-    <ul>
-        {% for order in orders %}
-            <li class="data">
-                <strong>{{ order.user__first_name }} {{ order.user__last_name }}</strong>: 
-                Ordered <em>{{ order.product__name }}</em> with 
-                <strong>{{ order.product__discount_id__value }}%</strong> discount
-            </li>
-        {% endfor %}
-    </ul>
+    <center>
+    <table border="1">
+        <thead>
+            <tr class="data">
+                <th>Index</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Product</th>
+                <th>Discount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                <tr class="data">
+                    <td align="center">{{ order.index }}</td>
+                    <td align="center">{{ order.user__first_name }}</td>
+                    <td align="center">{{ order.user__last_name }}</td>
+                    <td align="center">{{ order.product__name }}</td>
+                    <td align="center">{{ order.product__discount_id__value }}%</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </center>
+    <br>
+    <div class="statistics" class="data">
+        <h3>Statistics:</h3>
+        <p><strong>Max:</strong> {{ stats.max|floatformat:2 }}</p>
+        <p><strong>Min:</strong> {{ stats.min|floatformat:2 }}</p>
+        <p><strong>Avg:</strong> {{ stats.avg|floatformat:2 }}</p>
+        <p><strong>Median:</strong> {{ stats.median|floatformat:2 }}</p>
+    </div>
+    <br>
+    <h1>Average Discounts by User</h1>
+    <center>
+    <table border="1">
+        <thead>
+            <tr class="data">
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Average Discount (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in avg_discounts %}
+                <tr class="data">
+                    <td align="center">{{ row.first_name }}</td>
+                    <td align="center">{{ row.last_name }}</td>
+                    <td align="center">{{ row.average_discount|floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </center>
     <br>
     <a href="{% url 'Aggreg requests' %}" class="back_link">Back to Requests</a>
+
 </body>
 </html>
+
