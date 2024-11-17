@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Info by Order with Total Value Above 500</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>Delivery Info by Order with Total Value Above 500:</h1>
+    
+    <ul>
+        {% for info in infos %}
+            <li class="data">
+                <strong>
+                    {{ info.order__user__first_name }} {{ info.order__user__last_name }}
+                </strong> -
+                {{ info.city }}, {{ info.country }}
+            </li>
+        {% endfor %}
+    </ul>
+    
+    <br>
+
+    <a href="{% url 'Aggreg requests' %}" class="back_link">Back to Requests</a>
+</body>
+</html>

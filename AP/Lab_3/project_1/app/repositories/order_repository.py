@@ -4,6 +4,7 @@ from app.models.product import Product
 from app.repositories.i_repository import IRepository
 from app.repositories.product_repository import ProductRepository
 from decimal import Decimal
+from django.db.models import Sum, Count, F
 
 from django.utils import timezone
 
@@ -93,4 +94,26 @@ class OrderRepository(IRepository):
         order.save()
         return order
 
+    @staticmethod
+    def get_users_total_spent():
+        return Order.objects.values('user__first_name', 'user__last_name').annotate(
+            total_spent=Sum('total_price')
+        ).order_by('-total_spent')
 
+    @staticmethod
+    def get_top_products():
+        return Order.objects.values('product__name').annotate(
+            total_orders=Sum('amount')
+        ).order_by('-total_orders')
+
+    @staticmethod
+    def get_users_with_discount_orders():
+        return Order.objects.filter(product__discount_id__isnull=False).values(
+            'user__first_name', 'user__last_name', 'product__name', 'product__discount_id__value'
+        ).order_by("product__discount_id__value")
+
+    @staticmethod
+    def get_orders_with_revenue_over():
+        return Order.objects.values('user__first_name', 'user__last_name', 'total_price').annotate(
+            total_spent=Sum('total_price')
+        ).filter(total_spent__gt=500).order_by('-total_spent')

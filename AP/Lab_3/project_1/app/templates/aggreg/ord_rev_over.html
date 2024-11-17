@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders with Revenue Over 500</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>Orders with Revenue Over 500:</h1>
+    <ul>
+        {% for order in orders %}
+            <li class="data">
+                <strong>{{ order.user__first_name }} {{ order.user__last_name }}</strong>
+                with total revenue: {{ order.total_price }} 
+            </li>
+        {% endfor %}
+    </ul>
+    <br>
+    <a href="{% url 'Aggreg requests' %}" class="back_link">Back to Requests</a>
+</body>
+</html>
