@@ -10,9 +10,23 @@
 </head>
 <body>
     <h1>Country-Expenses Dashboard</h1>
-
     <br><br>
-
+    <form method="get" class="form-with-border">
+        <label class="data">Select Countries</label>
+        <div>
+        {% for country in countries %}
+            <label>
+                <input type="checkbox" name="countries" value="{{ country }}" 
+                       {% if country in selected_countries %} checked {% endif %}/> 
+                {{ country }}
+            </label>
+            <br>
+        {% endfor %}
+        </div>
+        <br>
+        <button class="button_submit" type="submit">Update Graphs</button>
+    </form>
+    <br><br>
     <div id="bar-chart">{{ bar_graph|safe }}</div>
     <br>
     <div id="pie-chart">{{ pie_graph|safe }}</div>
@@ -23,5 +37,8 @@
     <br>
     <a href="{% url 'Deliveries due to order' %}" class="back_link">Go Back</a>
 
+      
 </body>
 </html>
+
+

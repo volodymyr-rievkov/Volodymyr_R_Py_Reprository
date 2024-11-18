@@ -23,9 +23,13 @@ class DelivDashboardV1View(TemplateView):
                 grouped_infos = infos.groupby("country")["order__total_price"].sum().reset_index()
                 grouped_infos.columns = ["country", "expenses"]
 
-                bar_fig = px.bar(grouped_infos, x='country', y='expenses', title='Country Expenses')
-                pie_fig = px.pie(grouped_infos, names='country', values='expenses', title='Country Expenses')
-                line_fig = px.line(grouped_infos.sort_values(by='expenses', ascending=False), x='country', y='expenses', title='Country Expenses')
+                countries = grouped_infos["country"].tolist()
+                selected_countries = request.GET.getlist('countries') or countries
+                filtered_data = grouped_infos[grouped_infos["country"].isin(selected_countries)]
+                
+                bar_fig = px.bar(filtered_data, x='country', y='expenses', title='Country Expenses')
+                pie_fig = px.pie(filtered_data, names='country', values='expenses', title='Country Expenses')
+                line_fig = px.line(filtered_data.sort_values(by='expenses', ascending=False), x='country', y='expenses', title='Country Expenses')
 
                 bar_graph_html = bar_fig.to_html(full_html=False)
                 pie_graph_html = pie_fig.to_html(full_html=False)
@@ -35,6 +39,8 @@ class DelivDashboardV1View(TemplateView):
                     'bar_graph': bar_graph_html,
                     'pie_graph': pie_graph_html,
                     'line_graph': line_graph_html,
+                    'countries': countries,
+                    'selected_countries': selected_countries,
                 })
             else:
                 return redirect(f'{reverse("Error")}?error_message={ErrorMessages.OBJECTS_NOT_FOUND}')

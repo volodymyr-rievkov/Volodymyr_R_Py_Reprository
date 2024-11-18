@@ -1,4 +1,6 @@
-import plotly.express as px
+from bokeh.embed import components
+from bokeh.plotting import figure
+from bokeh.palettes import Category10
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -7,8 +9,8 @@ from requests.auth import HTTPBasicAuth
 from app.error_messages import ErrorMessages
 import pandas as pd
 
-class UserDashboardV1View(TemplateView):
-    template_name = 'dashboard/user/dashboard_v1.html'
+class UserDashboardV2View(TemplateView):
+    template_name = 'dashboard/user/dashboard_v2.html'
 
     def __init__(self):
         self.api_url = "http://127.0.0.1:8000/user_with_discount_api/"
@@ -29,18 +31,29 @@ class UserDashboardV1View(TemplateView):
                 min_discount = float(request.GET.get('min_discount', min_discount_value))
 
                 filtered_discounts = avg_discounts[avg_discounts['average_discount'] >= min_discount]
-                bar_fig = px.bar(filtered_discounts, x='full_name', y='average_discount', title='User Avg Discounts')
-                pie_fig = px.pie(filtered_discounts, names='full_name', values='average_discount', title='User Avg Discounts')
-                line_fig = px.line(filtered_discounts.sort_values(by='average_discount', ascending=False), x='full_name', y='average_discount', title='User Avg Discounts')
 
-                bar_graph_html = bar_fig.to_html(full_html=False)
-                pie_graph_html = pie_fig.to_html(full_html=False)
-                line_graph_html = line_fig.to_html(full_html=False)
+                bar_fig = figure(x_range=filtered_discounts['full_name'].tolist(), title="User Avg discounts", toolbar_location=None, tools="hover")
+                bar_fig.vbar(x=filtered_discounts['full_name'], top=filtered_discounts['average_discount'], width=0.9, color=Category10[10][0])
+                bar_fig.xaxis.axis_label = "User"
+                bar_fig.yaxis.axis_label = "Avg Discount"
+
+                line_fig = figure(title="User Avg discounts", x_axis_label="User", y_axis_label="Avg Discount", x_range=filtered_discounts['full_name'].tolist())
+                line_fig.line(filtered_discounts['full_name'], filtered_discounts['average_discount'], line_width=2, line_color="blue")
+
+                scatter_fig = figure(title="User Avg discounts", x_axis_label="User", y_axis_label="Avg Discount", x_range=filtered_discounts['full_name'].tolist())
+                scatter_fig.scatter(filtered_discounts['full_name'], filtered_discounts['average_discount'], size=8, color=Category10[10][1])
+
+                bar_script, bar_div = components(bar_fig)
+                line_script, line_div = components(line_fig)
+                scatter_script, scatter_div = components(scatter_fig)
 
                 return render(request, self.template_name, {
-                    'bar_graph': bar_graph_html,
-                    'pie_graph': pie_graph_html,
-                    'line_graph': line_graph_html,
+                    'bar_script': bar_script,
+                    'bar_div': bar_div,
+                    'line_script': line_script,
+                    'line_div': line_div,
+                    'scatter_script': scatter_script,
+                    'scatter_div': scatter_div,
                     'min_discount_value': min_discount_value,
                     'max_discount_value': max_discount_value,
                 })
