@@ -84,4 +84,12 @@ input._input {
     color: #ffffff;
     box-shadow: inset 1px 1px 6px rgba(255, 255, 255, 0.1);
 }
+.form-with-border {
+    border: 3px solid #007BFF; 
+    padding: 20px; 
+    border-radius: 10px; 
+    max-width: 200px; 
+    margin: auto; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
 

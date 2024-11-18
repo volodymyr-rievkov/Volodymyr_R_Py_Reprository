@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'style.css' %}">
     <title>User Avg Discount Dashboard</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.1.min.js"></script>
 </head>
 <body>
     <h1>User Avg Discount Dashboard</h1>
@@ -20,14 +20,30 @@
         <button class="button_submit" type="submit" >Apply Filter</button>
     </form>
     <br><br>
-    <div id="bar-chart">{{ bar_graph|safe }}</div>
-    <br>
-    <div id="pie-chart">{{ pie_graph|safe }}</div>
-    <br>
-    <div id="line-chart">{{ line_graph|safe }}</div>
-    <br>
 
-    <br>
+    <div id="bar-chart">
+    <center>
+        {{ bar_div|safe }}
+       {{ bar_script|safe }}
+    </center>
+    </div>
+    <br><br>
+    <div id="scatter-chart">
+    `<center>
+        {{ scatter_div|safe }}    
+        {{ scatter_script|safe }}
+    </center>
+    </div>
+    <br><br>
+    <div id="line-chart">
+    <center>
+        {{ line_div|safe }}    
+        {{ line_script|safe }}
+    </center>
+    </div>
+    
+
+    <br><br>
     <a href="{% url 'Users with discount' %}" class="back_link">Go Back</a>
 
     <script>
