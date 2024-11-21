@@ -88,5 +88,11 @@ class ProductRepository(IRepository):
     def get_products_with_discount_above():
         return Product.objects.filter(
             discount_id__value__gt=10 
-        ).order_by('-discount_id__value')
+        ).order_by('-discount_id__value').values(
+            "id", 
+            "name", 
+            "price", 
+            "discount_id__value", 
+            "amount", 
+            "info")
     

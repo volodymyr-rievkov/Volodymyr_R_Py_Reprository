@@ -1,9 +1,13 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from app.repositories.product_repository import ProductRepository
-from app.serializers.product_serializer import ProductSerializer
+from app.repository_factory import RepositoryFactory
+import pandas as pd
 
 class ProdsWithDscntsView(APIView):
+    def __init__(self):
+        self.repo = RepositoryFactory.product_repo()
+
     def get(self, request):
-        products = ProductRepository.get_products_with_discount_above()
-        return Response(ProductSerializer(products, many=True).data)
+        products = self.repo.get_products_with_discount_above()
+        df = pd.DataFrame(products)
+        return Response(df.to_json(orient="split"))

@@ -14,22 +14,27 @@ class ProdsWithDscntsPView(TemplateView):
         self.username = 'Volodymyr'  
         self.password = 'volodymyr'
 
+    def calc_stats(self, df):
+        return {
+                    "max": df['price'].max(),
+                    "min": df['price'].min(),
+                    "avg": df['price'].mean(),
+                    "median": df['price'].median()
+                }
+    
+    def convert_price_to_numeric(self, df):
+        df['price'] = pd.to_numeric(df['price'])
+
     def get(self, request):
         try:
             response = requests.get(self.api_url, auth=HTTPBasicAuth(self.username, self.password))
             if response.status_code == 200:
-                products = pd.DataFrame(response.json())
-                print("-" * 20)
-                print(products)
-                print("-" * 20)
-                products['price'] = pd.to_numeric(products['price'])
-                stats = {
-                    "max": products['price'].max(),
-                    "min": products['price'].min(),
-                    "avg": products['price'].mean(),
-                    "median": products['price'].median()
-                }
-                return render(request, self.template_name, {'products': products.reset_index().to_dict(orient="records"), 'stats': stats})
+                print("Received data:", response.json()) 
+                df = pd.read_json(response.json(), orient="split")
+                print("DataFrame preview:", df)
+                self.convert_price_to_numeric(df)
+                stats = self.calc_stats(df)
+                return render(request, self.template_name, {'products': df.reset_index().to_dict(orient="records"), 'stats': stats})
             else:
                 return redirect(f'{reverse("Error")}?error_message={ErrorMessages.OBJECTS_NOT_FOUND}')
         except requests.exceptions.RequestException as e:
