@@ -35,6 +35,23 @@ def inverse_matrix(matrix):
 def multiply_matrices(a, b):
     return np.round(np.dot(a, b))
 
+def gaussian_elimination(matrix, vector):
+    n = len(vector)
+    augmented_matrix = np.hstack((matrix, vector.reshape(-1, 1)))
+    for i in range(n):
+        max_row = max(range(i, n), key=lambda r: abs(augmented_matrix[r][i]))
+        augmented_matrix[[i, max_row]] = augmented_matrix[[max_row, i]]  
+        
+        for j in range(i + 1, n):
+            factor = augmented_matrix[j][i] / augmented_matrix[i][i]
+            augmented_matrix[j, i:] -= factor * augmented_matrix[i, i:]
+    
+    solution = np.zeros(n)
+    for i in range(n - 1, -1, -1):
+        solution[i] = (augmented_matrix[i, -1] - np.dot(augmented_matrix[i, i+1:n], solution[i+1:])) / augmented_matrix[i, i]
+    
+    return solution
+
 file_path = "D:\\Studing\\Чисельні методи\\Лабораторна робота №1\\lab_1_3.txt"
 matrix = read_matrix_from_file(file_path)
 print("Matrix:")

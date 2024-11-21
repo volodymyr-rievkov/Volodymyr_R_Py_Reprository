@@ -17,28 +17,50 @@ class DelivDashboardV2View(TemplateView):
         self.username = 'Volodymyr'
         self.password = 'volodymyr'
 
+    def group_info(self, infos):
+        grouped_infos = infos.groupby("country")["order__total_price"].sum().reset_index()
+        grouped_infos.columns = ["country", "expenses"]
+        return grouped_infos
+
+    def get_countries(self, infos):
+        return infos["country"].tolist()
+
+    def get_selected_countries(self, request, countries):
+        return request.GET.getlist('countries') or countries
+
+    def get_filtered_info(self, grouped_infos, selected_countries):
+        return grouped_infos[grouped_infos["country"].isin(selected_countries)]
+
+    def build_bar(self, filtered_info):
+        bar_fig = figure(x_range=filtered_info['country'].tolist(), title="Country Expenses", toolbar_location=None, tools="hover")
+        bar_fig.vbar(x=filtered_info['country'], top=filtered_info['expenses'], width=0.9, color=Category10[10][0])
+        bar_fig.xaxis.axis_label = "Country"
+        bar_fig.yaxis.axis_label = "Expenses"
+        return bar_fig
+
+    def build_line(self, filtered_info):
+        line_fig = figure(title="Country Expenses", x_axis_label="Country", y_axis_label="Expenses", x_range=filtered_info['country'].tolist())
+        line_fig.line(filtered_info['country'], filtered_info['expenses'], line_width=2, line_color="blue")
+        return line_fig
+
+    def build_scatter(self, filtered_info):
+        scatter_fig = figure(title="Country Expenses", x_axis_label="Country", y_axis_label="Expenses", x_range=filtered_info['country'].tolist())
+        scatter_fig.scatter(filtered_info['country'], filtered_info['expenses'], size=8, color=Category10[10][1])
+        return scatter_fig
+
     def get(self, request):
         try:
             response = requests.get(self.api_url, auth=HTTPBasicAuth(self.username, self.password))
             if response.status_code == 200:
-                infos = pd.DataFrame(response.json())
-                grouped_infos = infos.groupby("country")["order__total_price"].sum().reset_index()
-                grouped_infos.columns = ["country", "expenses"]
+                infos = pd.read_json(response.json(), orient="split")
+                grouped_infos = self.group_info(infos)
+                countries = self.get_countries(grouped_infos)
+                selected_countries = self.get_selected_countries(request, countries)
+                filtered_info = self.get_filtered_info(grouped_infos, selected_countries)
 
-                countries = grouped_infos["country"].tolist()
-                selected_countries = request.GET.getlist('countries') or countries
-                filtered_data = grouped_infos[grouped_infos["country"].isin(selected_countries)]
-
-                bar_fig = figure(x_range=filtered_data['country'].tolist(), title="Country Expenses", toolbar_location=None, tools="hover")
-                bar_fig.vbar(x=filtered_data['country'], top=filtered_data['expenses'], width=0.9, color=Category10[10][0])
-                bar_fig.xaxis.axis_label = "Country"
-                bar_fig.yaxis.axis_label = "Expenses"
-
-                line_fig = figure(title="Country Expenses", x_axis_label="Country", y_axis_label="Expenses", x_range=filtered_data['country'].tolist())
-                line_fig.line(filtered_data['country'], filtered_data['expenses'], line_width=2, line_color="blue")
-
-                scatter_fig = figure(title="Country Expenses", x_axis_label="Country", y_axis_label="Expenses", x_range=filtered_data['country'].tolist())
-                scatter_fig.scatter(filtered_data['country'], filtered_data['expenses'], size=8, color=Category10[10][1])
+                bar_fig = self.build_bar(filtered_info)
+                line_fig = self.build_line(filtered_info)
+                scatter_fig = self.build_scatter(filtered_info)
 
                 bar_script, bar_div = components(bar_fig)
                 line_script, line_div = components(line_fig)

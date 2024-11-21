@@ -14,21 +14,21 @@ class TopProdsPView(TemplateView):
         self.username = 'Volodymyr'  
         self.password = 'volodymyr'
 
+    def calc_stats(self, df):
+        return {
+                    "max": df['total_orders'].max(),
+                    "min": df['total_orders'].min(),
+                    "avg": df['total_orders'].mean(),
+                    "median": df['total_orders'].median()
+                }
+
     def get(self, request):
         try:
             response = requests.get(self.api_url, auth=HTTPBasicAuth(self.username, self.password))
             if response.status_code == 200:
-                products = pd.DataFrame(response.json())
-                print("-" * 20)
-                print(products)
-                print("-" * 20)
-                stats = {
-                    "max": products['total_orders'].max(),
-                    "min": products['total_orders'].min(),
-                    "avg": products['total_orders'].mean(),
-                    "median": products['total_orders'].median()
-                }
-                return render(request, self.template_name, {'products': products.reset_index().to_dict(orient="records"), 'stats': stats})
+                df = pd.read_json(response.json(), orient="split")
+                stats = self.calc_stats(df)
+                return render(request, self.template_name, {'products': df.reset_index().to_dict(orient="records"), 'stats': stats})
             else:
                 return redirect(f'{reverse("Error")}?error_message={ErrorMessages.OBJECTS_NOT_FOUND}')
         except requests.exceptions.RequestException as e:

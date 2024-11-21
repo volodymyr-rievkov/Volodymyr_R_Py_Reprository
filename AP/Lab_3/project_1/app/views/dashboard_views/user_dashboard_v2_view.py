@@ -17,31 +17,56 @@ class UserDashboardV2View(TemplateView):
         self.username = 'Volodymyr'  
         self.password = 'volodymyr'
 
+    def calc_avg_discounts(self, info):
+        avg_discounts = (info.groupby(["user__first_name", "user__last_name"])["product__discount_id__value"].mean().reset_index())
+        avg_discounts.columns = ["first_name", "last_name", "average_discount"]
+        avg_discounts["full_name"] = avg_discounts["first_name"] + " " + avg_discounts["last_name"]
+        return avg_discounts
+
+    def get_min_value(self, info):
+        return info["average_discount"].min()
+
+    def get_max_values(self, info):
+        return info["average_discount"].max()
+
+    def filter_info(self, info, min_value):
+        return info[info['average_discount'] >= min_value]
+
+    def get_min_discount(self, request, min_discount_value):
+        return float(request.GET.get('min_discount', min_discount_value))
+
+    def build_bar(self, info):
+        bar_fig = figure(x_range=info['full_name'].tolist(), title="User Avg discounts", toolbar_location=None, tools="hover")
+        bar_fig.vbar(x=info['full_name'], top=info['average_discount'], width=0.9, color=Category10[10][0])
+        bar_fig.xaxis.axis_label = "User"
+        bar_fig.yaxis.axis_label = "Avg Discount"
+        return bar_fig
+    
+    def build_line(self, info):
+        line_fig = figure(title="User Avg discounts", x_axis_label="User", y_axis_label="Avg Discount", x_range=info['full_name'].tolist())
+        line_fig.line(info['full_name'], info['average_discount'], line_width=2, line_color="blue")
+        return line_fig
+
+    def build_scatter(self, info):
+        scatter_fig = figure(title="User Avg discounts", x_axis_label="User", y_axis_label="Avg Discount", x_range=info['full_name'].tolist())
+        scatter_fig.scatter(info['full_name'], info['average_discount'], size=8, color=Category10[10][1])
+        return scatter_fig
+
     def get(self, request):
         try:
             response = requests.get(self.api_url, auth=HTTPBasicAuth(self.username, self.password))
             if response.status_code == 200:
-                orders = pd.DataFrame(response.json())
-                avg_discounts = (orders.groupby(["user__first_name", "user__last_name"])["product__discount_id__value"].mean().reset_index())
-                avg_discounts.columns = ["first_name", "last_name", "average_discount"]
-                avg_discounts["full_name"] = avg_discounts["first_name"] + " " + avg_discounts["last_name"]
+                orders = pd.read_json(response.json(), orient="split")
+                avg_discounts = self.calc_avg_discounts(orders)
+                min_discount_value = self.get_min_value(avg_discounts)
+                max_discount_value = self.get_max_values(avg_discounts)
+                min_discount = self.get_min_discount(request, min_discount_value)
 
-                min_discount_value = avg_discounts["average_discount"].min()
-                max_discount_value = avg_discounts["average_discount"].max()
-                min_discount = float(request.GET.get('min_discount', min_discount_value))
+                filtered_discounts = self.filter_info(avg_discounts, min_discount)
 
-                filtered_discounts = avg_discounts[avg_discounts['average_discount'] >= min_discount]
-
-                bar_fig = figure(x_range=filtered_discounts['full_name'].tolist(), title="User Avg discounts", toolbar_location=None, tools="hover")
-                bar_fig.vbar(x=filtered_discounts['full_name'], top=filtered_discounts['average_discount'], width=0.9, color=Category10[10][0])
-                bar_fig.xaxis.axis_label = "User"
-                bar_fig.yaxis.axis_label = "Avg Discount"
-
-                line_fig = figure(title="User Avg discounts", x_axis_label="User", y_axis_label="Avg Discount", x_range=filtered_discounts['full_name'].tolist())
-                line_fig.line(filtered_discounts['full_name'], filtered_discounts['average_discount'], line_width=2, line_color="blue")
-
-                scatter_fig = figure(title="User Avg discounts", x_axis_label="User", y_axis_label="Avg Discount", x_range=filtered_discounts['full_name'].tolist())
-                scatter_fig.scatter(filtered_discounts['full_name'], filtered_discounts['average_discount'], size=8, color=Category10[10][1])
+                bar_fig = self.build_bar(filtered_discounts)
+                line_fig = self.build_line(filtered_discounts)
+                scatter_fig = self.build_scatter(filtered_discounts)
 
                 bar_script, bar_div = components(bar_fig)
                 line_script, line_div = components(line_fig)

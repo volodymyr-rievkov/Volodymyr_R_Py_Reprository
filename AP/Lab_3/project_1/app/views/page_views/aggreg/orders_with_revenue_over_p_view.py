@@ -14,21 +14,21 @@ class OrdersWithRevenueOverPView(TemplateView):
         self.username = 'Volodymyr'  
         self.password = 'volodymyr'
 
+    def calc_stats(self, df):
+        return {
+                    "max": df['total_spent'].max(),
+                    "min": df['total_spent'].min(),
+                    "avg": df['total_spent'].mean(),
+                    "median": df['total_spent'].median()
+                }
+
     def get(self, request):
         try:
             response = requests.get(self.api_url, auth=HTTPBasicAuth(self.username, self.password))
             if response.status_code == 200:
-                orders = pd.DataFrame(response.json())
-                print("-" * 20)
-                print(orders)
-                print("-" * 20)
-                stats = {
-                    "max": orders['total_spent'].max(),
-                    "min": orders['total_spent'].min(),
-                    "avg": orders['total_spent'].mean(),
-                    "median": orders['total_spent'].median()
-                }
-                return render(request, self.template_name, {'orders': orders.reset_index().to_dict(orient="records"), 'stats': stats})
+                df = pd.read_json(response.json(), orient="split")
+                stats = self.calc_stats(df)
+                return render(request, self.template_name, {'orders': df.reset_index().to_dict(orient="records"), 'stats': stats})
             else:
                 return redirect(f'{reverse("Error")}?error_message={ErrorMessages.OBJECTS_NOT_FOUND}')
         except requests.exceptions.RequestException as e:

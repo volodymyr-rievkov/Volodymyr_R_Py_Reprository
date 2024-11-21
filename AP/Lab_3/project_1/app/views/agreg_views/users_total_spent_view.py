@@ -1,8 +1,13 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from app.repositories.order_repository import OrderRepository
+from app.repository_factory import RepositoryFactory
+import pandas as pd
 
 class UsersWithTotalView(APIView):
+    def __init__(self):
+        self.repo = RepositoryFactory.order_repo()
+
     def get(self, request):
-        users = OrderRepository.get_users_total_spent()
-        return Response(users)
+        users = self.repo.get_users_total_spent()
+        df = pd.DataFrame(users)
+        return Response(df.to_json(orient="split"))
