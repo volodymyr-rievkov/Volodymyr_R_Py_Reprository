@@ -9,7 +9,11 @@
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
-    <h1>Orders with Revenue Over 500:</h1>
+    <h1>Filter Orders by Revenue Value</h1>
+    <form method="get" action="">
+        <label class="data" for="value">Minimum Revenue Value:</label>
+        <input class="_input" type="number" id="value" name="value" value="{{ value }}">
+        <button class="button_submit" type="submit">Filter</button>
     <center>
         <table border="1">
             <thead>

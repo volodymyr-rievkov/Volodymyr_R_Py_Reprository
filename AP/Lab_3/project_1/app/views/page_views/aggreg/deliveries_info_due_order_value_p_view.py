@@ -13,6 +13,7 @@ class DelivsDueOrderPView(TemplateView):
         self.api_url = "http://127.0.0.1:8000/deliveries_due_to_order_api/"
         self.username = 'Volodymyr'  
         self.password = 'volodymyr'
+        self.DEFAULT_VALUE = 500
 
     def calc_stats(self, df):
         return {
@@ -29,7 +30,14 @@ class DelivsDueOrderPView(TemplateView):
 
     def get(self, request):
         try:
-            response = requests.get(self.api_url, auth=HTTPBasicAuth(self.username, self.password))
+            value = request.GET.get('value')
+            if value:
+                value = int(value)
+                request.session['value'] = value
+            else:
+                value = request.session.get('value', self.DEFAULT_VALUE)
+            params = {"value": value}
+            response = requests.get(self.api_url, params=params, auth=HTTPBasicAuth(self.username, self.password))
             if response.status_code == 200:
                 df = pd.read_json(response.json() , orient="split") 
                 stats = self.calc_stats(df)
@@ -37,7 +45,8 @@ class DelivsDueOrderPView(TemplateView):
                 return render(request, self.template_name, {
                     'infos': df.reset_index().to_dict(orient="records"),  
                     'stats': stats,
-                    'avg_expenses': avg_expenses.to_dict(orient="records") 
+                    'avg_expenses': avg_expenses.to_dict(orient="records"),
+                    'value': value
                 })
             else:
                 return redirect(f'{reverse("Error")}?error_message={ErrorMessages.OBJECTS_NOT_FOUND}')

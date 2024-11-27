@@ -8,13 +8,19 @@
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
-    <h1>Products with Discounts Above 10%:</h1>
+    <h1>Filter Products by Discount Value</h1>
+    <form method="get" action="">
+        <label class="data" for="value">Minimum Discount Value:</label>
+        <input class="_input" type="number" id="value" name="value" value="{{ value }}">
+        <button class="button_submit" type="submit">Filter</button>
+    </form>
     <center>
         <table border="1">
             <thead>
                 <tr class="data">
                     <th>Index</th>
                     <th>Product Name</th>
+                    <th>Discount</th>
                     <th>Price</th>
                 </tr>
             </thead>
@@ -23,6 +29,7 @@
                     <tr class="data">
                         <td align="center">{{ product.index }}</td>
                         <td align="center">{{ product.name }}</td>
+                        <td align="center">{{product.discount_id__value}} %</td>
                         <td align="center">{{ product.price }}</td>
                     </tr>
                 {% endfor %}

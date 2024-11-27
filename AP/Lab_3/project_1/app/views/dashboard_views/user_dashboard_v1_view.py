@@ -40,7 +40,7 @@ class UserDashboardV1View(TemplateView):
         return px.pie(info, names='full_name', values='average_discount', title='User Avg Discounts')
 
     def build_line(self, info):
-        return px.line(info.sort_values(by='average_discount', ascending=False), x='full_name', y='average_discount', title='User Avg Discounts')
+        return px.line(info, x='full_name', y='average_discount', title='User Avg Discounts')
 
     def convert_to_html(self, plot):
         return plot.to_html(full_html=False)

@@ -9,7 +9,9 @@ class DelivsDueOrderView(APIView):
         self.repo = RepositoryFactory.delivery_repo()
 
     def get(self, request):
-        deliveries = self.repo.get_delivery_info_by_order_value_above()
+        value = request.GET.get('value')
+        value = int(value)
+        deliveries = self.repo.get_delivery_info_by_order_value_above(value)
         df = pd.DataFrame(deliveries)
         return Response(df.to_json(orient="split"))
     

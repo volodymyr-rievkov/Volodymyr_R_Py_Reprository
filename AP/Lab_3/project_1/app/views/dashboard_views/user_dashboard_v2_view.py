@@ -8,6 +8,10 @@ import requests
 from requests.auth import HTTPBasicAuth 
 from app.error_messages import ErrorMessages
 import pandas as pd
+from math import pi
+from bokeh.transform import cumsum
+from bokeh.palettes import Viridis256
+from bokeh.models import ColumnDataSource
 
 class UserDashboardV2View(TemplateView):
     template_name = 'dashboard/user/dashboard_v2.html'
@@ -38,6 +42,7 @@ class UserDashboardV2View(TemplateView):
     def build_bar(self, info):
         bar_fig = figure(x_range=info['full_name'].tolist(), title="User Avg discounts", toolbar_location=None, tools="hover")
         bar_fig.vbar(x=info['full_name'], top=info['average_discount'], width=0.9, color=Category10[10][0])
+        bar_fig.xaxis.major_label_orientation = "vertical"
         bar_fig.xaxis.axis_label = "User"
         bar_fig.yaxis.axis_label = "Avg Discount"
         return bar_fig
@@ -45,12 +50,41 @@ class UserDashboardV2View(TemplateView):
     def build_line(self, info):
         line_fig = figure(title="User Avg discounts", x_axis_label="User", y_axis_label="Avg Discount", x_range=info['full_name'].tolist())
         line_fig.line(info['full_name'], info['average_discount'], line_width=2, line_color="blue")
+        line_fig.xaxis.major_label_orientation = "vertical"
         return line_fig
 
-    def build_scatter(self, info):
-        scatter_fig = figure(title="User Avg discounts", x_axis_label="User", y_axis_label="Avg Discount", x_range=info['full_name'].tolist())
-        scatter_fig.scatter(info['full_name'], info['average_discount'], size=8, color=Category10[10][1])
-        return scatter_fig
+    def build_pie(self, info):
+        info['angle'] = info['average_discount'] / info['average_discount'].sum() * 2 * pi  
+        info['color'] = Viridis256[:len(info)]
+        source = ColumnDataSource(data=dict(
+            user=info['full_name'],  
+            angle=info['angle'],
+            color=info['color'],
+            discount=info['average_discount'] 
+        ))
+        pie_fig = figure(
+            height=350,
+            title="User Avg Discounts",
+            toolbar_location=None,
+            tools="hover",
+            tooltips="@user: @discount", 
+            x_range=(-0.5, 1.0) 
+        )
+        pie_fig.wedge(
+            x=0, y=1,
+            radius=0.4,
+            start_angle=cumsum('angle', include_zero=True),
+            end_angle=cumsum('angle'),
+            line_color="white",  
+            fill_color='color',  
+            legend_field='user',  
+            source=source
+        )
+        pie_fig.axis.axis_label = None
+        pie_fig.axis.visible = False
+        pie_fig.grid.grid_line_color = None
+
+        return pie_fig
 
     def get(self, request):
         try:
@@ -66,19 +100,19 @@ class UserDashboardV2View(TemplateView):
 
                 bar_fig = self.build_bar(filtered_discounts)
                 line_fig = self.build_line(filtered_discounts)
-                scatter_fig = self.build_scatter(filtered_discounts)
+                pie_fig = self.build_pie(filtered_discounts)
 
                 bar_script, bar_div = components(bar_fig)
                 line_script, line_div = components(line_fig)
-                scatter_script, scatter_div = components(scatter_fig)
+                pie_script, pie_div = components(pie_fig)
 
                 return render(request, self.template_name, {
                     'bar_script': bar_script,
                     'bar_div': bar_div,
                     'line_script': line_script,
                     'line_div': line_div,
-                    'scatter_script': scatter_script,
-                    'scatter_div': scatter_div,
+                    'pie_script': pie_script, 
+                    'pie_div': pie_div, 
                     'min_discount_value': min_discount_value,
                     'max_discount_value': max_discount_value,
                 })
