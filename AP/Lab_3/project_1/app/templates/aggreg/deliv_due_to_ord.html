@@ -5,11 +5,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Info by Order Expenses Above 500</title>
+    <title>Delivery Info by Order Expenses Above</title>
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
-    <h1>Delivery Info by Order Expenses Above 500:</h1>
+    <h1>Filter Deliveries by Minimum Order Value</h1>
+    <form method="get" action="">
+        <label class="data" for="value">Minimum Order Value:</label>
+        <input class="_input" type="number" id="value" name="value" value="{{ value }}">
+        <button class="button_submit" type="submit">Filter</button>
+    </form>
     <center>
         <table border="1">
             <thead>
@@ -66,10 +71,10 @@
     </center>
     <br>
     <br>
-    <a href="{% url 'Delivery dashboard v1' %}" class="back_link">Go to dasboard V1</a>
+    <a href="{% url 'Delivery dashboard v1' %}?value={{ value }}" class="back_link">Go to dasboard V1</a>
     <br>
     <br>
-    <a href="{% url 'Delivery dashboard v2' %}" class="back_link">Go to dasboard V2</a>
+    <a href="{% url 'Delivery dashboard v2' %}?value={{ value }}" class="back_link">Go to dasboard V2</a>
     <br>
     <br>
     <a href="{% url 'Aggreg requests' %}" class="back_link">Back to Requests</a>

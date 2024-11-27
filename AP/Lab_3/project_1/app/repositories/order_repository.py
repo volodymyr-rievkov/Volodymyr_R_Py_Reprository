@@ -113,7 +113,7 @@ class OrderRepository(IRepository):
         ).order_by("product__discount_id__value")
 
     @staticmethod
-    def get_orders_with_revenue_over():
+    def get_orders_with_revenue_over(value):
         return Order.objects.values('user__first_name', 'user__last_name').annotate(
             total_spent=Sum('total_price')
-        ).filter(total_spent__gt=500).order_by('-total_spent')
+        ).filter(total_spent__gt=value).order_by('-total_spent')

@@ -14,6 +14,7 @@ class DelivDashboardV1View(TemplateView):
         self.api_url = "http://127.0.0.1:8000/deliveries_due_to_order_api/"
         self.username = 'Volodymyr'  
         self.password = 'volodymyr'
+        self.DEFAULT_VALUE = 500
 
     def group_info(self, infos):
         grouped_infos = infos.groupby("country")["order__total_price"].sum().reset_index()
@@ -36,14 +37,21 @@ class DelivDashboardV1View(TemplateView):
         return px.pie(filtered_info, names='country', values='expenses', title='Country Expenses')
 
     def build_line(self, filtered_info):
-        return px.line(filtered_info.sort_values(by='expenses', ascending=False), x='country', y='expenses', title='Country Expenses')
+        return px.line(filtered_info, x='country', y='expenses', title='Country Expenses')
 
     def convert_to_html(self, plot):
         return plot.to_html(full_html=False)
 
     def get(self, request):
         try:
-            response = requests.get(self.api_url, auth=HTTPBasicAuth(self.username, self.password))
+            value = request.GET.get('value')
+            if value:
+                value = int(value)
+                request.session['value'] = value
+            else:
+                value = request.session.get('value', self.DEFAULT_VALUE)
+            params = {'value': value}
+            response = requests.get(self.api_url, params=params, auth=HTTPBasicAuth(self.username, self.password))
             if response.status_code == 200:
                 infos = pd.read_json(response.json(), orient="split")
                 grouped_infos = self.group_info(infos)

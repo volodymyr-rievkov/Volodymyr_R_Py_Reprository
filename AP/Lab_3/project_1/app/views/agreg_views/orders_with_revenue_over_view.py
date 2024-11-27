@@ -8,7 +8,9 @@ class OrdersWithRevenueOverView(APIView):
         self.repo = RepositoryFactory.order_repo()
 
     def get(self, request):
-        orders = self.repo.get_orders_with_revenue_over()
+        value = request.GET.get('value')
+        value = int(value)
+        orders = self.repo.get_orders_with_revenue_over(value)
         df = pd.DataFrame(orders)
         return Response(df.to_json(orient="split"))
     

@@ -7,7 +7,10 @@ class ProdsWithDscntsView(APIView):
     def __init__(self):
         self.repo = RepositoryFactory.product_repo()
 
+
     def get(self, request):
-        products = self.repo.get_products_with_discount_above()
+        value = request.GET.get('value')
+        value = int(value)
+        products = self.repo.get_products_with_discount_above(value)
         df = pd.DataFrame(products)
         return Response(df.to_json(orient="split"))
