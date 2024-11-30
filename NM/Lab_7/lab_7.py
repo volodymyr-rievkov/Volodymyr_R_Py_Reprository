@@ -32,17 +32,15 @@ def trapezoid_method(func, a, b, n):
     
 def calc_integral_with_tolerance(func, a, b, n, method, tolerance):
     s_old = method(func, a, b, n)
-    iterations = 1
     while(True):
-        iterations += 1
         n *= 2
         s_new = method(func, a, b, n)
         if(abs(s_old - s_new) < tolerance):
-            return s_new, n, iterations
+            return s_new, n
         s_old = s_new
 
 FILE_NAME = "D:\\Studing\\Чисельні методи\\Лабораторна робота №7\\lab_7_1.txt"
-TOLERANCE = 0.5 * 10e-4
+TOLERANCE = 0.5 * 10e-5
 
 func_str, a, b = read_file(FILE_NAME)
 func = convert_str_to_func(func_str)
@@ -50,13 +48,11 @@ n = 2
 
 print(f"Integral:\n{func_str}\nWith bounds a: {a}, b: {b}.")
 
-s, n, iterations = calc_integral_with_tolerance(func, a, b, n, simpson_method, TOLERANCE)
+s, n = calc_integral_with_tolerance(func, a, b, n, simpson_method, TOLERANCE)
 print("Simpson method: ")
-print(f"Iterations: {iterations}")
 print(f"S = {s}, with n = {n}.")
 
-s, n, iterations = calc_integral_with_tolerance(func, a, b, n, trapezoid_method, TOLERANCE)
+s, n = calc_integral_with_tolerance(func, a, b, n, trapezoid_method, TOLERANCE)
 print("Trapezoid method: ")
-print(f"Iterations: {iterations}")
 print(f"S = {s}, with n = {n}.")
 
