@@ -156,11 +156,19 @@ print("B:")
 print(b)
 if(validate_matrix_1(matrix)):
     x = l_u_method(matrix, b)
-    print(f"X: {np.round(x, 3)} was found using LU method")
-if(validate_matrix_2(matrix, b)):
+    print("---LU method---")
+    print(f"X: {np.round(x, 3)}")
+matrix_m = np.array([[7, 2, -1], [0, -58, 8], [0, 5, 57]])
+b_m = np.array([-1, 57, 1])
+print(matrix_m)
+print(b_m)
+if(validate_matrix_2(matrix_m, b_m)):
     x_0 = np.array([0.5, -0.5, 0.2])
-    x, iterations = simple_iter_method(matrix, b, x_0, TOLERANCE)
-    print(f"X: {np.round(x, 3)} was found through {iterations} iterations, using simple iterations method.")
+    x, iterations = simple_iter_method(matrix_m, b_m, x_0, TOLERANCE)
+    print("---Simple iterations method---")
+    print(f"X: {np.round(x, 3)}.")
+    print(f"Iterations: {iterations}")
 YELLOW = "\033[33m"
 RESET = "\033[0m"
-print(f"{YELLOW}X: {np.round(np.linalg.solve(matrix, b), 3)} was found using built-in function.{RESET}")    
+print(f"{YELLOW}---Built-in function---")
+print(f"{YELLOW}X: {np.round(np.linalg.solve(matrix_m, b_m), 3)}{RESET}")    
