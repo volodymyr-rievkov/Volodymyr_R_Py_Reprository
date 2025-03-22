@@ -1,5 +1,4 @@
-
-def simplex(c, A, b):
+def dual_simplex(c, A, b):
     limits_count = len(A)  
     var_count = len(c)    
 
@@ -10,35 +9,35 @@ def simplex(c, A, b):
     table.append([-x for x in c] + [0])
 
     while True:
-        pivot_col = 0
-        min_value = table[-1][0]
-        for i in range(1, len(table[0]) - 1):
-            if (table[-1][i] < min_value):
-                min_value = table[-1][i]
-                pivot_col = i
+        pivot_row = -1
+        min_value = float('inf')
+        for i in range(limits_count):
+            if table[i][-1] < min_value:
+                min_value = table[i][-1]
+                pivot_row = i
 
-        if (min_value) >= 0:
+        if min_value >= 0:
             break
 
-        pivot_row = -1
+        pivot_col = -1
         min_ratio = float('inf')
-        for i in range(limits_count):
-            if (table[i][pivot_col] > 0):
-                ratio = table[i][-1] / table[i][pivot_col]
-                if (ratio < min_ratio):
+        for j in range(len(table[0]) - 1):
+            if table[pivot_row][j] < 0:
+                ratio = abs(table[-1][j] / table[pivot_row][j])
+                if ratio < min_ratio:
                     min_ratio = ratio
-                    pivot_row = i
+                    pivot_col = j
 
-        if (pivot_row == -1):
-            print("Error: Problem cannot be solved by simplex method.")
+        if pivot_col == -1:
+            print("Error: Problem cannot be solved by dual simplex method.")
             return None, None
 
         pivot_value = table[pivot_row][pivot_col]
-        for i in range(len(table[pivot_row])):
-            table[pivot_row][i] /= pivot_value
+        for j in range(len(table[pivot_row])):
+            table[pivot_row][j] /= pivot_value
 
         for i in range(len(table)):
-            if (i != pivot_row):
+            if i != pivot_row:
                 factor = table[i][pivot_col]
                 for j in range(len(table[i])):
                     table[i][j] -= factor * table[pivot_row][j]
@@ -57,19 +56,20 @@ def simplex(c, A, b):
                 break
         if one_count == 1:
             solution[j] = table[row_index][-1]
-
+    print("Vector c: " + str(table[-1]))
     return optimal_value, solution
 
-c = [8, -5, 0, 0, 0, 0]  
+c = [2, 1, 0, 0, 0, 0]  
 
 A = [
-    [2, -1, -1, 1, 0, 0],   
-    [4, 3, 0, 0, 1, 0],    
-    [-3, 2, 1, 0, 0, 1]     
+    [-1, 2, 1, 0, 0, 0],   
+    [-5, -2, 0, 1, 0, 0],
+    [4, -3, 0, 0, 1, 0],
+    [7, -4, 0, 0, 0, 1]    
 ]
 
-b = [4, 2, 3] 
+b = [14, -10, 12, 28] 
 
-opt_val, opt_sol = simplex(c, A, b)
+opt_val, opt_sol = dual_simplex(c, A, b)
 print(f"Optimal value of func: {opt_val}")
 print(f"Optimal variables: {opt_sol}")
