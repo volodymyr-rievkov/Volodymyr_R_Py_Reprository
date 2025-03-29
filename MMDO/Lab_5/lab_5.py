@@ -33,7 +33,7 @@ def min_value_method(C, a, b):
         for i in range(rows):
             for j in range(cols):
                 if((C_copy[i][j] != -1) and (C_copy[i][j] < min_value) and (a_copy[i] > 0) and (b_copy[j] > 0) and (result[i][j] == 0)):
-                    min_value = C[i][j]
+                    min_value = C_copy[i][j]
                     min_i, min_j = i, j
 
         transfer_value = min(a_copy[min_i], b_copy[min_j])
@@ -103,20 +103,21 @@ def calc_delta(X, C, u, v):
     for i in range(rows):
         for j in range(cols):
             if X[i][j] == 0:
-                delta[i][j] = u[i] + v[j] - C[i][j]
+                delta[i][j] = C[i][j] - (u[i] + v[j]) 
     
     return delta
 
-def max_delta(delta):
-    return max(max(row) for row in delta)
-
-def find_in_delta(delta, value):
+def find_min_delta(delta):
     rows = len(delta)
     cols = len(delta[0])
+    min = float('inf')
+    min_i = min_j = -1
     for i in range(rows):
         for j in range(cols):
-            if delta[i][j] == value:
-                return i, j
+            if delta[i][j] < min:
+                min = delta[i][j]
+                min_i, min_j = i, j
+    return min, min_i, min_j
 
 def find_cycle(X, start_i, start_j):
     n = len(X)  
@@ -149,8 +150,13 @@ def find_cycle(X, start_i, start_j):
 
     def dist(x1, y1, x2, y2):
         return abs(x1 - x2) + abs(y1 - y2)
-
+    
+    print("X:")
+    print_matrix(X)
+    print("T:")
+    print_matrix(T)
     fringe = set((x, y) for x in range(n) for y in range(m) if T[x][y] > 0)
+    print("Fringe: ", fringe)
     size = len(fringe)
     path = [(start_i, start_j)]  
     while len(path) < size:
@@ -182,12 +188,11 @@ def potential_method(X, C):
     print("Δ:")
     print_matrix(delta)
 
-    max_value = max_delta(delta)
-    if(max_value <= 0):
+    min_delta, min_i, min_j = find_min_delta(delta)
+    if(min_delta >= 0):
         return X
-    
-    max_i, max_j = find_in_delta(delta, max_value)
-    cycle = find_cycle(X, max_i, max_j)
+     
+    cycle = find_cycle(X, min_i, min_j)
     print("Cycle: ", cycle)
     improve_plan(X, cycle)
 
@@ -203,6 +208,16 @@ C = [
 a = [130, 90, 100, 140]
 
 b = [110, 50, 30, 80, 100, 90]
+
+# C = [
+#     [12, 16, 21, 19, 32],
+#     [4, 4, 9, 5, 24],
+#     [3, 8, 14, 10, 26],
+#     [24, 33, 36, 34, 49],
+#     [9, 25, 30, 20, 31]
+# ]
+# a = [85, 75, 125, 65, 170]
+# b = [105, 105, 95, 130, 85]
 
 check_task(C, a, b)
 print("a: ", a)
