@@ -1,5 +1,3 @@
-import numpy as np
-
 INF = float('inf')
 
 def branch_and_bound(cost_matrix):
