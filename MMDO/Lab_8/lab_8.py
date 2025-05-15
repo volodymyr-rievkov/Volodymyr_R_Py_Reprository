@@ -88,7 +88,7 @@ FUNCTION = "D:/Programming/PythonApplications/MMDO/Lab_8/func.txt"
 func_str = read_function(FUNCTION)
 
 EPS = 1e-6
-start_point = [0, 0, 0]
+start_point = [0.1, 0.2, 0.3]
 
 if(is_convex(func_str)):
     gradien_descent_method(func_str, start_point, EPS)

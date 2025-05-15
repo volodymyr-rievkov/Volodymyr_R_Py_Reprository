@@ -40,9 +40,9 @@ def golden_section_search(a, b, f, epsilon):
     return result
 
 FUNCTION = "D:/Programming/PythonApplications/MMDO/Lab_7/func.txt"
-a = 1.0  
-b = 1.5 
-epsilon = 0.000005
+a = -2.0  
+b = -1.0
+epsilon = 1e-3
 
 f = read_function(FUNCTION)
 minimum = golden_section_search(a, b, f, epsilon)
