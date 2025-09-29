@@ -1,0 +1,48 @@
+2025-09-29 13:06:56.717 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (Original) ===
+2025-09-29 13:06:57.240 | INFO     | __main__:check_kstest:39 - [31mAge (Original): KS-stat=0.099711, p-value=0.000000004[0m
+2025-09-29 13:06:57.241 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (log-transformed) ===
+2025-09-29 13:06:57.701 | INFO     | __main__:check_kstest:39 - [31mAge (log-transformed): KS-stat=0.050002, p-value=0.013007222[0m
+2025-09-29 13:06:57.702 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (sqrt-transformed) ===
+2025-09-29 13:06:58.278 | INFO     | __main__:check_kstest:39 - [32mAge (sqrt-transformed): KS-stat=0.034189, p-value=0.188567703[0m
+2025-09-29 13:06:58.278 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (cbrt-transformed) ===
+2025-09-29 13:06:58.766 | INFO     | __main__:check_kstest:39 - [32mAge (cbrt-transformed): KS-stat=0.011557, p-value=0.999152859[0m
+2025-09-29 13:07:22.370 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (Original) ===
+2025-09-29 13:07:22.729 | INFO     | __main__:check_kstest:39 - [31mIncome (Original): KS-stat=0.159693, p-value=0.000000000[0m
+2025-09-29 13:07:22.730 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (log-transformed) ===
+2025-09-29 13:07:23.178 | INFO     | __main__:check_kstest:39 - [31mIncome (log-transformed): KS-stat=0.079822, p-value=0.000005457[0m
+2025-09-29 13:07:23.178 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (sqrt-transformed) ===
+2025-09-29 13:07:23.574 | INFO     | __main__:check_kstest:39 - [31mIncome (sqrt-transformed): KS-stat=0.054964, p-value=0.004569483[0m
+2025-09-29 13:07:23.575 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (cbrt-transformed) ===
+2025-09-29 13:07:23.989 | INFO     | __main__:check_kstest:39 - [32mIncome (cbrt-transformed): KS-stat=0.031377, p-value=0.272711642[0m
+2025-09-29 13:17:30.047 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (Original) ===
+2025-09-29 13:17:30.528 | INFO     | __main__:check_kstest:39 - [31mAge (Original): KS-stat=0.099711, p-value=0.000000004[0m
+2025-09-29 13:17:30.531 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (log-transformed) ===
+2025-09-29 13:17:30.947 | INFO     | __main__:check_kstest:39 - [31mAge (log-transformed): KS-stat=0.050002, p-value=0.013007222[0m
+2025-09-29 13:17:30.947 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (sqrt-transformed) ===
+2025-09-29 13:17:31.299 | INFO     | __main__:check_kstest:39 - [32mAge (sqrt-transformed): KS-stat=0.034189, p-value=0.188567703[0m
+2025-09-29 13:17:31.299 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (cbrt-transformed) ===
+2025-09-29 13:17:31.690 | INFO     | __main__:check_kstest:39 - [32mAge (cbrt-transformed): KS-stat=0.011557, p-value=0.999152859[0m
+2025-09-29 13:17:37.004 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (Original) ===
+2025-09-29 13:17:37.366 | INFO     | __main__:check_kstest:39 - [31mIncome (Original): KS-stat=0.159693, p-value=0.000000000[0m
+2025-09-29 13:17:37.367 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (log-transformed) ===
+2025-09-29 13:17:37.777 | INFO     | __main__:check_kstest:39 - [31mIncome (log-transformed): KS-stat=0.079822, p-value=0.000005457[0m
+2025-09-29 13:17:37.777 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (sqrt-transformed) ===
+2025-09-29 13:17:38.134 | INFO     | __main__:check_kstest:39 - [31mIncome (sqrt-transformed): KS-stat=0.054964, p-value=0.004569483[0m
+2025-09-29 13:17:38.135 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (cbrt-transformed) ===
+2025-09-29 13:17:38.505 | INFO     | __main__:check_kstest:39 - [32mIncome (cbrt-transformed): KS-stat=0.031377, p-value=0.272711642[0m
