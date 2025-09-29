@@ -39,9 +39,12 @@ class Zscore:
         
         self.outliers_mask = self.aggreg_zscore > limit
         if(np.sum(self.outliers_mask) < count):
+            print(f'Outliers count is less than required(< {limit}). Using top {top_n}.')
             top_idx = np.argsort(self.aggreg_zscore)[-top_n:]
             self.outliers_mask = np.zeros(len(self.aggreg_zscore), dtype=bool)
             self.outliers_mask[top_idx] = True
+        print("--- Outliers ---")
+        print(self.df[self.outliers_mask])
         return self.outliers_mask
 
     def plot_2d(self, column1, column2):
