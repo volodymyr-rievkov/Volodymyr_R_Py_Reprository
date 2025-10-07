@@ -46,3 +46,51 @@
 2025-09-29 13:17:38.135 | INFO     | __main__:fully_check_variable:43 - 
 === Income (cbrt-transformed) ===
 2025-09-29 13:17:38.505 | INFO     | __main__:check_kstest:39 - [32mIncome (cbrt-transformed): KS-stat=0.031377, p-value=0.272711642[0m
+2025-10-01 13:49:27.270 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (Original) ===
+2025-10-01 13:49:28.169 | INFO     | __main__:check_kstest:39 - [31mAge (Original): KS-stat=0.099711, p-value=0.000000004[0m
+2025-10-01 13:49:28.170 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (log-transformed) ===
+2025-10-01 13:49:28.691 | INFO     | __main__:check_kstest:39 - [31mAge (log-transformed): KS-stat=0.050002, p-value=0.013007222[0m
+2025-10-01 13:49:28.691 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (sqrt-transformed) ===
+2025-10-01 13:49:29.266 | INFO     | __main__:check_kstest:39 - [32mAge (sqrt-transformed): KS-stat=0.034189, p-value=0.188567703[0m
+2025-10-01 13:49:29.267 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (cbrt-transformed) ===
+2025-10-01 13:49:29.779 | INFO     | __main__:check_kstest:39 - [32mAge (cbrt-transformed): KS-stat=0.011557, p-value=0.999152859[0m
+2025-10-01 13:49:34.165 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (Original) ===
+2025-10-01 13:49:34.624 | INFO     | __main__:check_kstest:39 - [31mIncome (Original): KS-stat=0.159693, p-value=0.000000000[0m
+2025-10-01 13:49:34.625 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (log-transformed) ===
+2025-10-01 13:49:35.155 | INFO     | __main__:check_kstest:39 - [31mIncome (log-transformed): KS-stat=0.079822, p-value=0.000005457[0m
+2025-10-01 13:49:35.155 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (sqrt-transformed) ===
+2025-10-01 13:49:35.665 | INFO     | __main__:check_kstest:39 - [31mIncome (sqrt-transformed): KS-stat=0.054964, p-value=0.004569483[0m
+2025-10-01 13:49:35.666 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (cbrt-transformed) ===
+2025-10-01 13:49:36.204 | INFO     | __main__:check_kstest:39 - [32mIncome (cbrt-transformed): KS-stat=0.031377, p-value=0.272711642[0m
+2025-10-01 13:56:08.460 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (Original) ===
+2025-10-01 13:56:09.059 | INFO     | __main__:check_kstest:39 - [31mAge (Original): KS-stat=0.099711, p-value=0.000000004[0m
+2025-10-01 13:56:09.060 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (log-transformed) ===
+2025-10-01 13:56:09.568 | INFO     | __main__:check_kstest:39 - [31mAge (log-transformed): KS-stat=0.050002, p-value=0.013007222[0m
+2025-10-01 13:56:09.569 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (sqrt-transformed) ===
+2025-10-01 13:56:10.096 | INFO     | __main__:check_kstest:39 - [32mAge (sqrt-transformed): KS-stat=0.034189, p-value=0.188567703[0m
+2025-10-01 13:56:10.096 | INFO     | __main__:fully_check_variable:43 - 
+=== Age (cbrt-transformed) ===
+2025-10-01 13:56:10.603 | INFO     | __main__:check_kstest:39 - [32mAge (cbrt-transformed): KS-stat=0.011557, p-value=0.999152859[0m
+2025-10-01 13:56:31.387 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (Original) ===
+2025-10-01 13:56:31.840 | INFO     | __main__:check_kstest:39 - [31mIncome (Original): KS-stat=0.159693, p-value=0.000000000[0m
+2025-10-01 13:56:31.840 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (log-transformed) ===
+2025-10-01 13:56:32.362 | INFO     | __main__:check_kstest:39 - [31mIncome (log-transformed): KS-stat=0.079822, p-value=0.000005457[0m
+2025-10-01 13:56:32.362 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (sqrt-transformed) ===
+2025-10-01 13:56:32.874 | INFO     | __main__:check_kstest:39 - [31mIncome (sqrt-transformed): KS-stat=0.054964, p-value=0.004569483[0m
+2025-10-01 13:56:32.874 | INFO     | __main__:fully_check_variable:43 - 
+=== Income (cbrt-transformed) ===
+2025-10-01 13:56:33.368 | INFO     | __main__:check_kstest:39 - [32mIncome (cbrt-transformed): KS-stat=0.031377, p-value=0.272711642[0m
