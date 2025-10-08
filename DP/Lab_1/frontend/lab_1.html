@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ЛР №1: ГПВЧ</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <h1>Генератор псевдовипадкових чисел</h1>
+        <label>Кількість чисел:</label>
+        <input id="n" type="number" min="1" placeholder="Введіть N">
+        <div id="n-error" class="error"></div>
+        <br>
+        <button onclick="generateToColumn()">Генерувати в стовпець</button>
+        <div id="result"></div>
+        <div id="sequence-container">
+            <ul id="sequence-list"></ul>
+        </div>
+        <div id="tracking"></div>
+        <button id="load-more" style="display: none;" onclick="loadMore()">Дозавантажити</button>
+        <div id="tests-section">
+            <button onclick="getPeriod()">Перевірити період</button>
+            <div id="period-result"></div>
+            <button onclick="runCesaro()">Тест Чезаро</button>
+            <div id="cesaro-error" class="error"></div>
+            <div id="cesaro-result"></div>
+        </div>
+        <br>
+        <button onclick="downloadFile()">Завантажити файл</button>
+        <div id="download-error" class="error"></div>
+        <br>
+        <a href="/">Назад до меню</a>
+    </div>
+    <script src="/config.js"></script>
+    <script>
+        let sequenceData = [];
+        let displayedCount = 0;
+        const batchSize = 100;
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function clearError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+
+        async function generateToColumn() {
+            const n = document.getElementById('n').value;
+            clearError('n-error');
+            if (!n || n <= 0) {
+                showError('n-error', 'Введіть додатне N');
+                return;
+            }
+            if (n > 10**9) {
+                if (!confirm('Велике N (>1B) може викликати затримки. Продовжити?')) return;
+            }
+            try {
+                document.getElementById('result').innerHTML = 'Генерація...';
+                const response = await fetch(`${CONFIG.API_URL}/lab1/generate?n=${n}`);
+                if (!response.ok) throw new Error(`Помилка API: ${response.statusText}`);
+                const text = await response.text();
+                sequenceData = text.trim().split('\n').map(Number);
+                displayedCount = 0;
+                document.getElementById('sequence-list').innerHTML = '';
+                document.getElementById('load-more').style.display = 'none';
+                document.getElementById('period-result').innerHTML = '';
+                document.getElementById('cesaro-result').innerHTML = '';
+                loadMore();
+                document.getElementById('result').innerHTML = 'Послідовність згенеровано';
+            } catch (e) {
+                document.getElementById('result').innerHTML = `Помилка: ${e.message}`;
+            }
+        }
+
+        function loadMore() {
+            const list = document.getElementById('sequence-list');
+            const nextBatch = sequenceData.slice(displayedCount, displayedCount + batchSize);
+            nextBatch.forEach(num => {
+                const li = document.createElement('li');
+                li.textContent = num;
+                list.appendChild(li);
+            });
+            displayedCount += nextBatch.length;
+            document.getElementById('tracking').textContent = `Відображено: ${displayedCount} з ${sequenceData.length}`;
+            document.getElementById('load-more').style.display = displayedCount < sequenceData.length ? 'inline-block' : 'none';
+        }
+
+        async function downloadFile() {
+            clearError('download-error');
+            if (sequenceData.length === 0) {
+                showError('download-error', 'Спочатку згенеруйте послідовність!');
+                return;
+            }
+            const n = document.getElementById('n').value;
+            const filename = 'generated_sequence_of_' + n + '.txt';
+            const content = sequenceData.join('\n');
+
+            if (window.showSaveFilePicker) {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName: filename,
+                        types: [{
+                            description: 'Text Files',
+                            accept: { 'text/plain': ['.txt'] }
+                        }]
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(content);
+                    await writable.close();
+                    document.getElementById('result').innerHTML = `Файл ${filename} збережено`;
+                    return;
+                } catch (e) {
+                    if (e.name === 'AbortError') {
+                        document.getElementById('result').innerHTML = 'Скасовано збереження файлу';
+                        return;
+                    } else {
+                        console.error('Помилка File System Access API:', e);
+                    }
+                }
+            }
+
+            try {
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+                document.getElementById('result').innerHTML = `Файл ${filename} збережено`;
+            } catch (e) {
+                document.getElementById('result').innerHTML = `Помилка при збереженні: ${e.message}`;
+            }
+        }
+
+        async function getPeriod() {
+            try {
+                const response = await fetch(`${CONFIG.API_URL}/lab1/period`);
+                if (!response.ok) throw new Error(`Помилка API: ${response.statusText}`);
+                const data = await response.json();
+                document.getElementById('period-result').innerHTML = `Період: ${data.period}`;
+            } catch (e) {
+                document.getElementById('result').innerHTML = `Помилка: ${e.message}`;
+            }
+        }
+
+        async function runCesaro() {
+            const n = document.getElementById('n').value;
+            clearError('cesaro-error');
+            if (!n || n <= 0) {
+                showError('n-error', 'Введіть додатне N');
+                return;
+            }
+            if (n % 2 !== 0) {
+                showError('cesaro-error', 'Введіть парне N');
+                return;
+            }
+            if (n > 10**9) {
+                if (!confirm('Велике N (>1B) може викликати затримки. Продовжити?')) return;
+            }
+            try {
+                const response = await fetch(`${CONFIG.API_URL}/lab1/cesaro?n=${n}`);
+                if (!response.ok) throw new Error(`Помилка API: ${response.statusText}`);
+                const data = await response.json();
+                document.getElementById('cesaro-result').innerHTML = `Оцінена π: ${data.estimated_pi}`;
+            } catch (e) {
+                document.getElementById('result').innerHTML = `Помилка: ${e.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
