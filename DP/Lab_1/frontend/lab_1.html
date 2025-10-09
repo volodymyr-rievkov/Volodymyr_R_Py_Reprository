@@ -32,11 +32,12 @@
         <br>
         <a href="/">Назад до меню</a>
     </div>
+
     <script src="/config.js"></script>
     <script>
         let sequenceData = [];
         let displayedCount = 0;
-        const batchSize = 100;
+        const batchSize = 1000;
 
         function showError(elementId, message) {
             const errorElement = document.getElementById(elementId);
@@ -57,22 +58,38 @@
                 showError('n-error', 'Введіть додатне N');
                 return;
             }
-            if (n > 10**9) {
-                if (!confirm('Велике N (>1B) може викликати затримки. Продовжити?')) return;
-            }
+            if (n > 10**9 && !confirm('Велике N (>1B) може викликати затримки. Продовжити?')) return;
+
             try {
                 document.getElementById('result').innerHTML = 'Генерація...';
-                const response = await fetch(`${CONFIG.API_URL}/lab1/generate?n=${n}`);
-                if (!response.ok) throw new Error(`Помилка API: ${response.statusText}`);
-                const text = await response.text();
-                sequenceData = text.trim().split('\n').map(Number);
+                sequenceData = [];
                 displayedCount = 0;
                 document.getElementById('sequence-list').innerHTML = '';
                 document.getElementById('load-more').style.display = 'none';
                 document.getElementById('period-result').innerHTML = '';
                 document.getElementById('cesaro-result').innerHTML = '';
-                loadMore();
+
+                const response = await fetch(`${CONFIG.API_URL}/lab1/generate?n=${n}`);
+                if (!response.ok) throw new Error(`Помилка API: ${response.statusText}`);
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let remainder = '';
+                let done = false;
+
+                while (!done) {
+                    const { value, done: readerDone } = await reader.read();
+                    done = readerDone;
+                    const textChunk = remainder + decoder.decode(value || new Uint8Array(), { stream: !done });
+                    const lines = textChunk.split('\n');
+                    remainder = lines.pop() || '';
+                    sequenceData.push(...lines);
+                }
+                if (remainder) sequenceData.push(remainder);
+
+                document.getElementById('load-more').style.display = sequenceData.length > 0 ? 'inline-block' : 'none';
                 document.getElementById('result').innerHTML = 'Послідовність згенеровано';
+                loadMore();
             } catch (e) {
                 document.getElementById('result').innerHTML = `Помилка: ${e.message}`;
             }
@@ -80,12 +97,14 @@
 
         function loadMore() {
             const list = document.getElementById('sequence-list');
-            const nextBatch = sequenceData.slice(displayedCount, displayedCount + batchSize);
+            const nextBatch = sequenceData.slice(displayedCount, displayedCount + batchSize).map(Number);
+            const fragment = document.createDocumentFragment();
             nextBatch.forEach(num => {
                 const li = document.createElement('li');
                 li.textContent = num;
-                list.appendChild(li);
+                fragment.appendChild(li);
             });
+            list.appendChild(fragment);
             displayedCount += nextBatch.length;
             document.getElementById('tracking').textContent = `Відображено: ${displayedCount} з ${sequenceData.length}`;
             document.getElementById('load-more').style.display = displayedCount < sequenceData.length ? 'inline-block' : 'none';
@@ -161,9 +180,8 @@
                 showError('cesaro-error', 'Введіть парне N');
                 return;
             }
-            if (n > 10**9) {
-                if (!confirm('Велике N (>1B) може викликати затримки. Продовжити?')) return;
-            }
+            if (n > 10**9 && !confirm('Велике N (>1B) може викликати затримки. Продовжити?')) return;
+
             try {
                 const response = await fetch(`${CONFIG.API_URL}/lab1/cesaro?n=${n}`);
                 if (!response.ok) throw new Error(`Помилка API: ${response.statusText}`);
