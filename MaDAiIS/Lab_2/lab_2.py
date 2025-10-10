@@ -125,7 +125,7 @@ def mean_values_by_column_subplots(dataset, group_column, value_column=COLUMN, b
 
     print(f"Subplot chart saved to {plot_path}")
  
-def test_samples(dataset, column=COLUMN, group_col="experience_level", group1="MI", group2="SE", alternative="two-sided"):
+def test_samples(dataset, group1, group2, column=COLUMN, group_col="experience_level", alternative="two-sided"):
 
     P_LIMIT = 0.05
     data1 = dataset[dataset[group_col] == group1][column].dropna()
