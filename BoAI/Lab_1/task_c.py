@@ -12,7 +12,6 @@ def is_solvable(s):
                 inv += 1
     return inv % 2 == 0
 
-
 def bfs(start, target):
     queue = deque([(start, 0)])
     visited = set([start])
@@ -39,13 +38,13 @@ def bfs(start, target):
     else:
         return -1         
 
-
 start = ""
 for _ in range(N):
     start += input().strip()
-
 
 if not is_solvable(start):
     print(-1)
 else:
     print(bfs(start, TARGET))
+
+# O((n^2)! / 2), same with memory

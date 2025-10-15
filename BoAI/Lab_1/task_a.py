@@ -1,8 +1,6 @@
 import sys
 from collections import defaultdict, deque
 
-
-
 data = sys.stdin.read().strip().split(); ptr = 0
 
 n = int(data[ptr]); ptr += 1
@@ -19,8 +17,6 @@ for _ in range(n):
         vrtx = (round(x, 3), round(y, 3), round(z, 3))
         triangle.append(vrtx)
     triangles.append(triangle)
-
-
 
 vrtx_ids = {}
 vrtx_id = 0
@@ -59,7 +55,6 @@ for tri_list in edge_dict.values():
                     adj[a].append(b)
 
 
-
 def bfs(start, goal, adj):
     if start == goal:
         return 0
@@ -77,3 +72,5 @@ def bfs(start, goal, adj):
     return -1
 
 print(bfs(start, goal, adj))
+
+#Best Case O(n), Worst Case O(n^2), same with memory
