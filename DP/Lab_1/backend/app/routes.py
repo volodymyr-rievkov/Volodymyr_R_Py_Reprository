@@ -13,7 +13,6 @@ async def generate(n: int = Query(..., gt=0)):
 
 @router.get("/params")
 async def get_params():
-    """Повертає параметри генератора для фронту"""
     return get_lcg_params()
 
 @router.get("/period")

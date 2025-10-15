@@ -116,12 +116,20 @@
                 showError('download-error', 'Спочатку згенеруйте послідовність!');
                 return;
             }
+
             const n = document.getElementById('n').value;
             const filename = 'generated_sequence_of_' + n + '.txt';
-            const content = sequenceData.join('\n');
 
-            if (window.showSaveFilePicker) {
-                try {
+            try {
+                const paramsResponse = await fetch(`${CONFIG.API_URL}/lab1/params`);
+                if (!paramsResponse.ok) throw new Error(`Помилка при отриманні параметрів: ${paramsResponse.statusText}`);
+                const params = await paramsResponse.json();
+
+
+                const header = `Параметри LCG:\nM = ${params.M}\nA = ${params.A}\nC = ${params.C}\nX0 = ${params.X0}\n\nЗгенеровані числа:\n`;
+                const content = header + sequenceData.join('\n');
+
+                if (window.showSaveFilePicker) {
                     const handle = await window.showSaveFilePicker({
                         suggestedName: filename,
                         types: [{
@@ -134,17 +142,8 @@
                     await writable.close();
                     document.getElementById('result').innerHTML = `Файл ${filename} збережено`;
                     return;
-                } catch (e) {
-                    if (e.name === 'AbortError') {
-                        document.getElementById('result').innerHTML = 'Скасовано збереження файлу';
-                        return;
-                    } else {
-                        console.error('Помилка File System Access API:', e);
-                    }
                 }
-            }
 
-            try {
                 const blob = new Blob([content], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -153,10 +152,12 @@
                 a.click();
                 URL.revokeObjectURL(url);
                 document.getElementById('result').innerHTML = `Файл ${filename} збережено`;
+
             } catch (e) {
-                document.getElementById('result').innerHTML = `Помилка при збереженні: ${e.message}`;
+                document.getElementById('download-error').innerHTML = `Помилка при завантаженні: ${e.message}`;
             }
         }
+
 
         async function getPeriod() {
             try {
