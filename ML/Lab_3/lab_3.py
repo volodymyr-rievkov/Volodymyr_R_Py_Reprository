@@ -238,4 +238,5 @@ if __name__ == "__main__":
     save_tree_plots(trees_denoised, X_train_denoised, output_dir=f"{OUTPUT_DIR_PLOTS}_denoised")
 
     # Task 5
+    compare_scores(scores, scores_noisy)
     compare_scores(scores_noisy, scores_denoised)
