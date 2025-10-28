@@ -116,33 +116,33 @@ def full_optimize_staff(
 
 def main():
 
-    # successful, best = full_optimize_staff()
-    # if best:
-    #     print("\n=== Найкраща комбінація ===")
-    #     print(f"Касири: {best[0]}, Швейцари: {best[1]}, Офіціанти: {best[2]}")
-    #     print(f"Середній час: {calculate_wait_time(best[3])}")
-    # else:
-    #     print("\nЖодна комбінація не досягла цільового часу.")
+    successful, best = full_optimize_staff()
+    if best:
+        print("\n=== Найкраща комбінація ===")
+        print(f"Касири: {best[0]}, Швейцари: {best[1]}, Офіціанти: {best[2]}")
+        print(f"Середній час: {calculate_wait_time(best[3])}")
+    else:
+        print("\nЖодна комбінація не досягла цільового часу.")
+
+    input("\nPress Enter to continue...")
+
+    successful, best = full_optimize_staff(target_minutes=9, fixed_cashiers=10)
+    if best:
+        print("\n=== Найкраща комбінація ===")
+        print(f"Касири: {best[0]}, Швейцари: {best[1]}, Офіціанти: {best[2]}")
+        print(f"Середній час: {calculate_wait_time(best[3])}")
+    else:
+        print("\nЖодна комбінація не досягла цільового часу.")
 
     # input("\nPress Enter to continue...")
 
-    # successful, best = full_optimize_staff(target_minutes=9, fixed_cashiers=10)
-    # if best:
-    #     print("\n=== Найкраща комбінація ===")
-    #     print(f"Касири: {best[0]}, Швейцари: {best[1]}, Офіціанти: {best[2]}")
-    #     print(f"Середній час: {calculate_wait_time(best[3])}")
-    # else:
-    #     print("\nЖодна комбінація не досягла цільового часу.")
-
-    # # input("\nPress Enter to continue...")
-
-    # successful, best = full_optimize_staff(target_minutes=5)
-    # if best:
-    #     print("\n=== Найкраща комбінація ===")
-    #     print(f"Касири: {best[0]}, Швейцари: {best[1]}, Офіціанти: {best[2]}")
-    #     print(f"Середній час: {calculate_wait_time(best[3])}")
-    # else:
-    #     print("\nЖодна комбінація не досягла цільового часу.")
+    successful, best = full_optimize_staff(target_minutes=5)
+    if best:
+        print("\n=== Найкраща комбінація ===")
+        print(f"Касири: {best[0]}, Швейцари: {best[1]}, Офіціанти: {best[2]}")
+        print(f"Середній час: {calculate_wait_time(best[3])}")
+    else:
+        print("\nЖодна комбінація не досягла цільового часу.")
     
     input("\nPress Enter to continue...")
 

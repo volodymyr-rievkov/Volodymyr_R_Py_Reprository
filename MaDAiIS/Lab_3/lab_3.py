@@ -169,5 +169,11 @@ def main():
     else:
         print("\nЖодна комбінація не досягла цільового часу.")
 
+    input("\nPress Enter to continue...")
+    print("\n=== Оптимізація з фіксованим рейтом ===")
+    result = run_simulation(num_admins=3, num_doctors=4, num_labs=2, num_pharmacists=2, arrival_rate=2, sim_time=480, seed=42)
+    print(f"Обслужено: {result['served']}, Відхилено: {result['rejected']} → {calculate_wait_time(result['avg_wait'])}, Відхилення: {result['p_refusal'] * 100}%")
+
+
 if __name__ == "__main__":
     main()
