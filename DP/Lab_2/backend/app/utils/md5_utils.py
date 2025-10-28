@@ -1,5 +1,6 @@
 import re
 from fastapi import HTTPException, UploadFile
+from ..md5 import MD5
 
 MD5_REGEX = re.compile(r"^[a-fA-F0-9]{32}$")
 
@@ -20,9 +21,21 @@ async def extract_provided_hash(md5_hash: str | None, hash_file: UploadFile | No
     return provided_hash
 
 
-async def calculate_md5(data):
-    from ..md5 import md5_from_string, md5_from_file
+def md5_from_string(text: str) -> str:
+    md = MD5()
+    md.update(text)
+    return md.hexdigest()
 
+
+async def md5_from_file(upload_file, chunk_size=1024 * 512):
+    md = MD5()
+    while chunk := await upload_file.read(chunk_size):
+        md.update(chunk)
+    await upload_file.close()
+    return md.hexdigest()
+
+
+async def calculate_md5(data):
     if hasattr(data, "read"):
         return await md5_from_file(data)
     elif isinstance(data, str):

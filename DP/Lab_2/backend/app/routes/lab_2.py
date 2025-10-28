@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Request, File, UploadFile, HTTPException, Form
-from ..md5 import md5_from_string, md5_from_file
-from ..utils.md5_utils import extract_provided_hash, calculate_md5
+from ..utils.md5_utils import extract_provided_hash, md5_from_string, md5_from_file, calculate_md5
 
 router = APIRouter()
 

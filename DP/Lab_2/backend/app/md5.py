@@ -80,17 +80,3 @@ class MD5:
 
     def hexdigest(self) -> str:
         return ''.join(f"{b:02x}" for b in self.digest())
-
-def md5_from_string(text: str) -> str:
-    md = MD5()
-    md.update(text)
-    return md.hexdigest()
-
-async def md5_from_file(upload_file, chunk_size=1024 * 512):
-    md = MD5()
-    total_bits = 0
-    while chunk := await upload_file.read(chunk_size):
-        total_bits += len(chunk) * 8
-        md.update(chunk)
-    await upload_file.close()
-    return md.hexdigest()

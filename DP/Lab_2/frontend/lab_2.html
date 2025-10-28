@@ -111,10 +111,7 @@
             document.getElementById('verification-result').textContent = '';
 
             const inputData = document.getElementById('input-data');
-            // if (!isInputFile && !inputData.value) {
-            //     showError('input-error', 'Введіть текст для хешування');
-            //     return;
-            // }
+
             if (isInputFile && !inputData.files.length) {
                 showError('input-error', 'Виберіть файл для хешування');
                 return;
@@ -163,10 +160,6 @@
 
             let hasError = false;
 
-            // if (!isInputFile && !inputData.value) {
-            //     showError('input-error', 'Введіть текст для хешування');
-            //     hasError = true;
-            // } 
             if (isInputFile && (!inputData.files || !inputData.files.length)) {
                 showError('input-error', 'Виберіть файл для хешування');
                 hasError = true;
@@ -225,6 +218,7 @@
 
         document.getElementById('download-button').addEventListener('click', async () => {
             clearError('download-error');
+            calculatedHash = document.getElementById('calculated-hash').textContent;
             if (!calculatedHash) {
                 showError('download-error', 'Спочатку згенеруйте хеш!');
                 return;
