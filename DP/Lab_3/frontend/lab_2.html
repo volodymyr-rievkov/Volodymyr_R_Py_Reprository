@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>MD5 Хешування</title>
+    <link rel="stylesheet" href="static/styles_2.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <h1>MD5 Хешування</h1>
+
+        <div class="input-section">
+            <label for="input-data">Введіть текст для хешування:</label>
+            <div class="input-group">
+                <input id="input-data" type="text" placeholder="Введіть текст" class="input-field">
+                <button id="switch-to-file" class="switch-button">Вибрати файл</button>
+            </div>
+            <div id="input-error" class="error"></div>
+        </div>
+
+        <button id="hash-button" class="action-button">Хешувати</button>
+
+        <div class="result-section">
+            <label>Обчислений хеш:</label>
+            <div id="calculated-hash" class="result"></div>
+        </div>
+
+        <div class="input-section">
+            <label for="hash-input">Введіть хеш для перевірки:</label>
+            <div class="input-group">
+                <input id="hash-input" type="text" placeholder="Введіть хеш (MD5)" class="input-field">
+                <button id="switch-to-hash-file" class="switch-button">Вибрати хеш-файл</button>
+            </div>
+            <div id="hash-error" class="error"></div>
+        </div>
+
+        <button id="verify-button" class="action-button">Перевірити</button>
+
+        <div class="result-section">
+            <label>Результат перевірки:</label>
+            <div id="verification-result" class="result"></div>
+        </div>
+
+        <button id="download-button" class="action-button">Завантажити хеш</button>
+        <div id="download-error" class="error"></div>
+        <div id="download-stat" class="result"></div>
+        <br>
+        <a href="/" class="back-link">Назад до меню</a>
+    </div>
+
+    <script src="/config.js"></script>
+    <script>
+        let isInputFile = false;
+        let isHashFile = false;
+        let calculatedHash = '';
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function clearError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+
+        document.getElementById('switch-to-file').addEventListener('click', () => {
+            const inputContainer = document.getElementById('input-data').parentElement;
+            const currentInput = document.getElementById('input-data');
+            const newType = isInputFile ? 'text' : 'file';
+            const newInput = document.createElement('input');
+            newInput.id = 'input-data';
+            newInput.type = newType;
+            newInput.className = 'input-field';
+            newInput.placeholder = newType === 'text' ? 'Введіть текст' : '';
+            inputContainer.replaceChild(newInput, currentInput);
+            document.getElementById('switch-to-file').textContent = isInputFile ? 'Вибрати файл' : 'Ввести текст';
+            isInputFile = !isInputFile;
+            clearError('input-error');
+            clearError('hash-error');
+            clearError('download-error');
+        });
+
+        document.getElementById('switch-to-hash-file').addEventListener('click', () => {
+            const hashContainer = document.getElementById('hash-input').parentElement;
+            const currentInput = document.getElementById('hash-input');
+            const newType = isHashFile ? 'text' : 'file';
+            const newInput = document.createElement('input');
+            newInput.id = 'hash-input';
+            newInput.type = newType;
+            newInput.className = 'input-field';
+            newInput.placeholder = newType === 'text' ? 'Введіть хеш (MD5)' : '';
+            hashContainer.replaceChild(newInput, currentInput);
+            document.getElementById('switch-to-hash-file').textContent = isHashFile ? 'Вибрати хеш-файл' : 'Ввести текст';
+            isHashFile = !isHashFile;
+            clearError('hash-error');
+            clearError('input-error');
+            clearError('download-error');
+            
+        });
+
+        document.getElementById('hash-button').addEventListener('click', async () => {
+            clearError('input-error');
+            clearError('hash-error');
+            clearError('download-error');
+            document.getElementById('download-stat').textContent = '';
+            document.getElementById('calculated-hash').textContent = '';
+            document.getElementById('verification-result').textContent = '';
+
+            const inputData = document.getElementById('input-data');
+
+            if (isInputFile && !inputData.files.length) {
+                showError('input-error', 'Виберіть файл для хешування');
+                return;
+            }
+
+            try {
+                let response;
+                if (!isInputFile) {
+                    response = await fetch(`${CONFIG.API_URL_LAB_2}/hash-string`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ input: inputData.value })
+                    });
+                } else {
+                    const formData = new FormData();
+                    formData.append('file', inputData.files[0]);
+                    response = await fetch(`${CONFIG.API_URL_LAB_2}/hash-file`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Помилка API');
+                }
+
+                const data = await response.json();
+                calculatedHash = data.md5_hash;
+                document.getElementById('calculated-hash').textContent = calculatedHash;
+            } catch (e) {
+                showError('input-error', `Помилка хешування: ${e.message}`);
+            }
+        });
+
+        document.getElementById('verify-button').addEventListener('click', async () => {
+            clearError('input-error');
+            clearError('hash-error');
+            clearError('download-error');
+            document.getElementById('download-stat').textContent = '';
+            document.getElementById('calculated-hash').textContent = '';
+            document.getElementById('verification-result').textContent = '';
+
+            const inputData = document.getElementById('input-data');
+            const hashInput = document.getElementById('hash-input');
+
+            let hasError = false;
+
+            if (isInputFile && (!inputData.files || !inputData.files.length)) {
+                showError('input-error', 'Виберіть файл для хешування');
+                hasError = true;
+            }
+
+            if (!isHashFile && !hashInput.value) {
+                showError('hash-error', 'Введіть хеш для перевірки');
+                hasError = true;
+            } else if (isHashFile && (!hashInput.files || !hashInput.files.length)) {
+                showError('hash-error', 'Виберіть хеш-файл для перевірки');
+                hasError = true;
+            }
+
+            if (hasError) return; 
+
+            try {
+                const formData = new FormData();
+                if (!isInputFile) {
+                    formData.append('input_text', inputData.value);
+                } else {
+                    formData.append('file', inputData.files[0]);
+                }
+                if (!isHashFile) {
+                    formData.append('md5_hash', hashInput.value);
+                } else {
+                    formData.append('hash_file', hashInput.files[0]);
+                }
+
+                const response = await fetch(`${CONFIG.API_URL_LAB_2}/verify-hash`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Помилка API');
+                }
+
+                const data = await response.json();
+                calculatedHash = data.calculated_hash;
+                document.getElementById('calculated-hash').textContent = calculatedHash;
+                const verificationResult = document.getElementById('verification-result');
+                verificationResult.classList.remove('match', 'mismatch');
+                if (data.is_valid) {
+                    verificationResult.textContent = 'Хеші збігаються';
+                    verificationResult.classList.add('match');
+                } else {
+                    verificationResult.textContent = 'Хеші не збігаються';
+                    verificationResult.classList.add('mismatch');
+                }
+
+            } catch (e) {
+                showError('hash-error', `Помилка перевірки: ${e.message}`);
+            }
+        });
+
+        document.getElementById('download-button').addEventListener('click', async () => {
+            clearError('download-error');
+            calculatedHash = document.getElementById('calculated-hash').textContent;
+            if (!calculatedHash) {
+                showError('download-error', 'Спочатку згенеруйте хеш!');
+                return;
+            }
+            const now = new Date();
+
+            const day = String(now.getDate()).padStart(2, "0");
+            const month = String(now.getMonth() + 1).padStart(2, "0"); 
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, "0");
+            const minutes = String(now.getMinutes()).padStart(2, "0");
+            const timestamp = `${day}_${month}_${year}_${hours}-${minutes}`;
+
+            const filename = 'md5_hash_' + timestamp + '.txt';
+            const content = calculatedHash;
+
+            if (window.showSaveFilePicker) {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: filename,
+                    types: [{ description: 'Text Files', accept: { 'text/plain': ['.txt'] } }]
+                });
+                const writable = await handle.createWritable();
+                await writable.write(content);
+                await writable.close();
+                document.getElementById('download-stat').textContent = `Файл ${filename} збережено`;
+                return;
+            }
+            try {
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+                document.getElementById('download-stat').textContent = `Файл ${filename} збережено`;
+            } catch (e) {
+                showError('download-error', `Помилка завантаження: ${e.message}`);
+            }
+        });
+    </script>
+</body>
+</html>
