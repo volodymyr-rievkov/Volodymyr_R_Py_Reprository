@@ -1,0 +1,15 @@
+{
+    "bins": [
+        12,
+        12,
+        24,
+        24
+    ],
+    "alpha_init": 0.2,
+    "gamma": 0.99,
+    "epsilon": 0.01,
+    "epsilon_decay": 0.9995,
+    "min_alpha": 0.05,
+    "min_epsilon": 0.01,
+    "episodes_trained": 9341
+}
