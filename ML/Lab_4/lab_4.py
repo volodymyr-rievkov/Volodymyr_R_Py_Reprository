@@ -177,5 +177,6 @@ if __name__ == "__main__":
     # agent.save_qtable()
     # agent.save_params()
     # agent.plot_rewards(rewards)
-    agent.load_qtable("PythonApplications/ML/Lab_4/data/q_table_9341.npy")
+    qtable_path = "PythonApplications/ML/Lab_4/data/q_table_9341.npy"
+    agent.load_qtable(qtable_path)
     agent.play(episodes=5)
