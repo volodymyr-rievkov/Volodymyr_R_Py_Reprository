@@ -1,0 +1,22 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN python -m pip install --upgrade pip \
+    && python -m pip install -r requirements.txt \
+    && python -m pip install coverage pytest pytest-asyncio colorama
+
+COPY . .
+
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+ENV PYTEST_ADDOPTS="--color=yes"
+
+CMD ["sh", "-c", "\
+coverage run --branch --source=/app --omit='*/main.py' -m pytest /app/tests \
+--maxfail=1 --disable-warnings -v --color=yes && \
+coverage report -m \
+"]
+
