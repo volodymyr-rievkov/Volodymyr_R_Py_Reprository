@@ -2,14 +2,14 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>RSA Шифрування/Дешифрування</title>
+    <title>DSA Підпис/Верифікація</title>
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="static/styles_4.css">
+    <link rel="stylesheet" href="/static/styles_5.css">
 </head>
 <body>
     <div class="container">
-        <h1>RSA Шифрування/Дешифрування</h1>
-       
+        <h1>DSA Підпис/Верифікація</h1>
+      
         <div class="key-generation-section">
             <h2>Генерація ключів</h2>
             <div class="input-section">
@@ -24,8 +24,21 @@
                 </div>
             </div>
             <button id="generate-keys-button" class="action-button">Генерувати ключі</button>
-           
+          
             <div class="keys-output-section" style="display: none;">
+<div class="input-section">
+                    <label for="private-key">Приватний ключ:</label>
+                    <div class="input-group">
+                        <textarea id="private-key" class="key-textarea" placeholder="-----BEGIN PRIVATE KEY-----
+...
+-----END PRIVATE KEY-----" readonly></textarea>
+                        <div class="button-group">
+                            <button id="download-private-key" class="download-key-button">Завантажити</button>
+                            <br>
+                            <button id="copy-private-key" class="download-key-button">Копіювати</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="input-section">
                     <label for="public-key">Публічний ключ:</label>
                     <div class="input-group">
@@ -39,77 +52,62 @@
                         </div>
                     </div>
                 </div>
-                <div class="input-section">
-                    <label for="private-key">Приватний ключ:</label>
-                    <div class="input-group">
-                        <textarea id="private-key" class="key-textarea" placeholder="-----BEGIN PRIVATE KEY-----
-...
------END PRIVATE KEY-----" readonly></textarea>
-                        <div class="button-group">
-                            <button id="download-private-key" class="download-key-button">Завантажити</button>
-                            <br>
-                            <button id="copy-private-key" class="download-key-button">Копіювати</button>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         </div>
         <div class="sections">
             <div class="section">
-                <h2>Шифрування</h2>
-              
+                <h2>Генерація підпису</h2>
+             
                 <div class="input-section">
-                    <label for="encrypt-data">Введіть дані для шифрування:</label>
+                    <label for="sign-data">Введіть дані для підпису:</label>
                     <div class="input-group">
-                        <input id="encrypt-data" type="text" placeholder="Введіть текст" class="input-field">
-                        <button id="encrypt-data-switch" class="switch-button">Вибрати файл</button>
+                        <input id="sign-data" type="text" placeholder="Введіть текст" class="input-field">
+                        <button id="sign-data-switch" class="switch-button">Вибрати файл</button>
                     </div>
-                    <div id="encrypt-data-error" class="error"></div>
+                    <div id="sign-data-error" class="error"></div>
                 </div>
                 <div class="input-section">
-                    <label>
-                        <input type="checkbox" id="encrypt-hybrid"> Використовувати гібридний режим
-                    </label>
-                </div>
-                <div class="input-section">
-                    <label for="encrypt-public-key">Введіть публічний ключ:</label>
+                    <label for="sign-private-key">Введіть приватний ключ:</label>
                     <div class="input-group">
-                        <textarea id="encrypt-public-key" class="key-textarea" placeholder="-----BEGIN PUBLIC KEY-----
-...
------END PUBLIC KEY-----"></textarea>
-                        <button id="encrypt-public-key-switch" class="switch-button">Вибрати файл з ключем</button>
-                    </div>
-                    <div id="encrypt-public-key-error" class="error"></div>
-                </div>
-                <button id="encrypt-button" class="action-button">Шифрувати</button>
-            </div>
-            <div class="section">
-                <h2>Дешифрування</h2>
-              
-                <div class="input-section">
-                    <label for="decrypt-data">Введіть дані для дешифрування (base64 або файл):</label>
-                    <div class="input-group">
-                        <input id="decrypt-data" type="text" placeholder="Введіть base64" class="input-field">
-                        <button id="decrypt-data-switch" class="switch-button">Вибрати файл</button>
-                    </div>
-                    <div id="decrypt-data-error" class="error"></div>
-                </div>
-                <div class="input-section">
-                    <label>
-                        <input type="checkbox" id="decrypt-hybrid"> Використовувати гібридний режим
-                    </label>
-                </div>
-                <div class="input-section">
-                    <label for="decrypt-private-key">Введіть приватний ключ:</label>
-                    <div class="input-group">
-                        <textarea id="decrypt-private-key" class="key-textarea" placeholder="-----BEGIN PRIVATE KEY-----
+                        <textarea id="sign-private-key" class="key-textarea" placeholder="-----BEGIN PRIVATE KEY-----
 ...
 -----END PRIVATE KEY-----"></textarea>
-                        <button id="decrypt-private-key-switch" class="switch-button">Вибрати файл з ключем</button>
+                        <button id="sign-private-key-switch" class="switch-button">Вибрати файл з ключем</button>
                     </div>
-                    <div id="decrypt-private-key-error" class="error"></div>
+                    <div id="sign-private-key-error" class="error"></div>
                 </div>
-                <button id="decrypt-button" class="action-button">Дешифрувати</button>
+                <button id="sign-button" class="action-button">Підписати</button>
+            </div>
+            <div class="section">
+                <h2>Верифікація</h2>
+                <div class="input-section">
+                    <label for="verify-data">Введіть дані для верифікації (текст або файл):</label>
+                    <div class="input-group">
+                        <input id="verify-data" type="text" placeholder="Введіть текст" class="input-field">
+                        <button id="verify-data-switch" class="switch-button">Вибрати файл</button>
+                    </div>
+                    <div id="verify-data-error" class="error"></div>
+                </div>
+                <div class="input-section">
+                    <label for="verify-public-key">Введіть публічний ключ:</label>
+                    <div class="input-group">
+                        <textarea id="verify-public-key" class="key-textarea" placeholder="-----BEGIN PUBLIC KEY-----
+...
+-----END PUBLIC KEY-----"></textarea>
+                        <button id="verify-public-key-switch" class="switch-button">Вибрати файл з ключем</button>
+                    </div>
+                    <div id="verify-public-key-error" class="error"></div>
+                </div>
+                <div class="input-section">
+                    <label for="verify-signature">Введіть цифровий підпис (hex або файл):</label>
+                    <div class="input-group">
+                        <input id="verify-signature" type="text" placeholder="Введіть hex (16-кове число)" class="input-field">
+                        <button id="verify-signature-switch" class="switch-button">Вибрати файл з підписом</button>
+                    </div>
+                    <div id="verify-signature-error" class="error"></div>
+                </div>
+                <button id="verify-button" class="action-button">Верифікувати</button>
             </div>
         </div>
         <div id="universal-result-section" class="universal-result-section">
@@ -125,17 +123,18 @@
     </div>
     <script src="/config.js"></script>
     <script>
-        let encryptDataIsFile = false;
-        let encryptPublicKeyIsFile = false;
-        let decryptDataIsFile = false;
-        let decryptPrivateKeyIsFile = false;
+        let signDataIsFile = false;
+        let signPrivateKeyIsFile = false;
+        let verifyDataIsFile = false;
+        let verifySignatureIsFile = false;
+        let verifyPublicKeyIsFile = false;
         let currentBlob = null;
         let currentFilename = '';
         let resultChunks = [];
         let displayedChunkIndex = 0;
         const chunkSize = 32;
         const batchSize = 1;
-       
+      
         function readFileAsText(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -144,7 +143,16 @@
                 reader.readAsText(file);
             });
         }
-       
+
+        function readFileAsArrayBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(new Error('Помилка читання файлу.'));
+                reader.readAsArrayBuffer(file);
+            });
+        }
+      
         function showError(elementId, message) {
             const errorElement = document.getElementById(elementId);
             errorElement.textContent = message;
@@ -155,15 +163,19 @@
             errorElement.textContent = '';
             errorElement.style.display = 'none';
         }
-        function uint8ToString(uint8) {
-            let str = '';
-            const chars = new Array(uint8.length);
-            for (let i = 0; i < uint8.length; ++i) {
-                chars[i] = String.fromCharCode(uint8[i]);
-            }
-            str = chars.join('');
-            return str;
+
+        function uint8ToHex(uint8) {
+            return Array.from(uint8, byte => byte.toString(16).padStart(2, '0')).join('');
         }
+
+        function hexToUint8(hex) {
+            const bytes = [];
+            for (let i = 0; i < hex.length; i += 2) {
+                bytes.push(parseInt(hex.substr(i, 2), 16));
+            }
+            return new Uint8Array(bytes);
+        }
+
         function splitChunk(str) {
             let chunks = [];
             for (let i = 0; i < str.length; i += chunkSize) {
@@ -171,6 +183,7 @@
             }
             return chunks;
         }
+
         function toggleInput(switchId, inputId, currentIsFile, buttonTextWhenTargetFile, buttonTextWhenTargetText, errorIds, placeholderText, placeholderFile, isTextarea = false) {
             const switchButton = document.getElementById(switchId);
             const inputContainer = document.getElementById(inputId).parentElement;
@@ -196,27 +209,37 @@
             switchButton.textContent = targetIsFile ? buttonTextWhenTargetFile : buttonTextWhenTargetText;
             errorIds.forEach(id => clearError(id));
         }
-        document.getElementById('encrypt-data-switch').addEventListener('click', () => {
-            toggleInput('encrypt-data-switch', 'encrypt-data', encryptDataIsFile, 'Ввести текст', 'Вибрати файл', ['encrypt-data-error'], 'Введіть текст', '', false);
-            encryptDataIsFile = !encryptDataIsFile;
+
+        document.getElementById('sign-data-switch').addEventListener('click', () => {
+            toggleInput('sign-data-switch', 'sign-data', signDataIsFile, 'Ввести текст', 'Вибрати файл', ['sign-data-error'], 'Введіть текст', '', false);
+            signDataIsFile = !signDataIsFile;
         });
-        document.getElementById('encrypt-public-key-switch').addEventListener('click', () => {
-            toggleInput('encrypt-public-key-switch', 'encrypt-public-key', encryptPublicKeyIsFile, 'Ввести ключ', 'Вибрати файл з ключем', ['encrypt-public-key-error'], '-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----', '', true);
-            encryptPublicKeyIsFile = !encryptPublicKeyIsFile;
+
+        document.getElementById('sign-private-key-switch').addEventListener('click', () => {
+            toggleInput('sign-private-key-switch', 'sign-private-key', signPrivateKeyIsFile, 'Ввести ключ', 'Вибрати файл з ключем', ['sign-private-key-error'], '-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----', '', true);
+            signPrivateKeyIsFile = !signPrivateKeyIsFile;
         });
-        document.getElementById('decrypt-data-switch').addEventListener('click', () => {
-            toggleInput('decrypt-data-switch', 'decrypt-data', decryptDataIsFile, 'Ввести base64', 'Вибрати файл', ['decrypt-data-error'], 'Введіть base64', '', false);
-            decryptDataIsFile = !decryptDataIsFile;
+
+        document.getElementById('verify-data-switch').addEventListener('click', () => {
+            toggleInput('verify-data-switch', 'verify-data', verifyDataIsFile, 'Ввести текст', 'Вибрати файл', ['verify-data-error'], 'Введіть текст', '', false);
+            verifyDataIsFile = !verifyDataIsFile;
         });
-        document.getElementById('decrypt-private-key-switch').addEventListener('click', () => {
-            toggleInput('decrypt-private-key-switch', 'decrypt-private-key', decryptPrivateKeyIsFile, 'Ввести ключ', 'Вибрати файл з ключем', ['decrypt-private-key-error'], '-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----', '', true);
-            decryptPrivateKeyIsFile = !decryptPrivateKeyIsFile;
+
+        document.getElementById('verify-signature-switch').addEventListener('click', () => {
+            toggleInput('verify-signature-switch', 'verify-signature', verifySignatureIsFile, 'Ввести hex', 'Вибрати файл з підписом', ['verify-signature-error'], 'Введіть hex (16-кове число)', '', false);
+            verifySignatureIsFile = !verifySignatureIsFile;
         });
+
+        document.getElementById('verify-public-key-switch').addEventListener('click', () => {
+            toggleInput('verify-public-key-switch', 'verify-public-key', verifyPublicKeyIsFile, 'Ввести ключ', 'Вибрати файл з ключем', ['verify-public-key-error'], '-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----', '', true);
+            verifyPublicKeyIsFile = !verifyPublicKeyIsFile;
+        });
+
         async function downloadBlob(blob, filename) {
             if (window.showSaveFilePicker) {
                 const handle = await window.showSaveFilePicker({
                     suggestedName: filename,
-                    types: [{ description: 'Binary Files', accept: { 'application/octet-stream': ['.enc', '.txt', '.pem'] } }]
+                    types: [{ description: 'Binary Files', accept: { 'application/octet-stream': ['.sig', '.txt', '.pem'] } }]
                 });
                 const writable = await handle.createWritable();
                 await writable.write(blob);
@@ -234,6 +257,7 @@
                 return true;
             }
         }
+
         function loadMore() {
             const resultDiv = document.getElementById('universal-result');
             const numBatches = Math.min(batchSize, resultChunks.length - displayedChunkIndex);
@@ -244,10 +268,10 @@
             document.getElementById('tracking').textContent = `Відображено: ${resultDiv.textContent.length} з ${totalSymbols} символів`;
             document.getElementById('load-more').style.display = displayedChunkIndex < resultChunks.length ? 'inline-block' : 'none';
         }
-        async function processStream(response, isEncrypt) {
+
+        async function processStream(response) {
             const reader = response.body.getReader();
             const fullChunks = [];
-            const decoder = new TextDecoder();
             let remainder = '';
             resultChunks = [];
             while (true) {
@@ -255,24 +279,9 @@
                 if (done) break;
                 if (value) {
                     fullChunks.push(value);
-                    let chunkStr;
-                    if (isEncrypt) {
-                        const uint8 = new Uint8Array(value);
-                        const str = uint8ToString(uint8);
-                        chunkStr = btoa(str);
-                    } else {
-                        const decoded = decoder.decode(value, { stream: !done });
-                        if (remainder) {
-                            chunkStr = remainder + decoded;
-                            remainder = '';
-                        } else {
-                            chunkStr = decoded;
-                        }
-                        if (done && remainder) {
-                            chunkStr += remainder;
-                        }
-                    }
-                    const smallChunks = splitChunk(chunkStr);
+                    const uint8 = new Uint8Array(value);
+                    const hexChunk = uint8ToHex(uint8);
+                    const smallChunks = splitChunk(hexChunk);
                     resultChunks.push(...smallChunks);
                 }
             }
@@ -288,7 +297,8 @@
             }
             return new Blob([]);
         }
-        async function showUniversalResult(isEncrypt, blob, filename, isFileInput) {
+
+        async function showUniversalResult(isSign, blob, filename, isFileInput, verifyResult = null) {
             const resultSection = document.getElementById('universal-result-section');
             const resultDiv = document.getElementById('universal-result');
             const downloadButton = document.getElementById('download-button');
@@ -301,18 +311,18 @@
             resultDiv.textContent = '';
             currentBlob = blob;
             currentFilename = filename;
-            if (!isFileInput) {
+
+            if (verifyResult !== null) {
+                // Для верифікації: просто текстовий результат
+                resultDiv.textContent = verifyResult ? 'Підпис дійсний ✅' : 'Підпис недійсний ❌';
+                loadMoreButton.style.display = 'none';
+                tracking.textContent = '';
+                downloadButton.style.display = 'none'; // Не завантажуємо для verify
+            } else if (!isFileInput) {
                 const buffer = await blob.arrayBuffer();
-                let content;
-                if (isEncrypt) {
-                    const uint8 = new Uint8Array(buffer);
-                    const str = uint8ToString(uint8);
-                    content = btoa(str);
-                } else {
-                    const uint8 = new Uint8Array(buffer);
-                    content = new TextDecoder('utf-8').decode(uint8);
-                }
-                resultDiv.textContent = content;
+                const uint8 = new Uint8Array(buffer);
+                const hex = uint8ToHex(uint8);
+                resultDiv.textContent = hex;
                 loadMoreButton.style.display = 'none';
                 tracking.textContent = '';
             } else {
@@ -321,6 +331,7 @@
                 loadMoreButton.style.display = displayedChunkIndex < resultChunks.length ? 'inline-block' : 'none';
             }
         }
+
         function clearUniversalResult() {
             const resultSection = document.getElementById('universal-result-section');
             const resultDiv = document.getElementById('universal-result');
@@ -339,11 +350,13 @@
             currentBlob = null;
             currentFilename = '';
         }
+
         document.getElementById('download-button').addEventListener('click', async () => {
             if (currentBlob && currentFilename) {
                 await downloadBlob(currentBlob, currentFilename);
             }
         });
+
         function getTimestamp() {
             const now = new Date();
             const year = now.getFullYear();
@@ -354,10 +367,11 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             return `${year}${month}${day}_${hours}${minutes}${seconds}`;
         }
+
         document.getElementById('generate-keys-button').addEventListener('click', async () => {
             const keySize = document.getElementById('key-size').value;
             try {
-                const response = await fetch(`${CONFIG.API_URL_LAB_4}/generate_keys?bits=${keySize}`, {
+                const response = await fetch(`${CONFIG.API_URL_LAB_5}/generate_keys?bits=${keySize}`, {
                     method: 'POST'
                 });
                 if (!response.ok) {
@@ -372,6 +386,7 @@
                 alert(`Помилка генерації ключів: ${e.message}`);
             }
         });
+
         document.getElementById('download-public-key').addEventListener('click', async () => {
             const publicKeyText = document.getElementById('public-key').value;
             if (publicKeyText) {
@@ -379,6 +394,7 @@
                 await downloadBlob(blob, 'public_key.pem');
             }
         });
+
         document.getElementById('download-private-key').addEventListener('click', async () => {
             const privateKeyText = document.getElementById('private-key').value;
             if (privateKeyText) {
@@ -386,6 +402,7 @@
                 await downloadBlob(blob, 'private_key.pem');
             }
         });
+
         // Функція для копіювання тексту з тимчасовим повідомленням
         function copyToClipboard(text, buttonId) {
             navigator.clipboard.writeText(text).then(() => {
@@ -402,6 +419,7 @@
                 alert('Не вдалося скопіювати текст. Спробуйте вручну.');
             });
         }
+
         // Копіювання ключів
         document.getElementById('copy-public-key').addEventListener('click', () => {
             const text = document.getElementById('public-key').value;
@@ -411,6 +429,7 @@
                 alert('Спочатку згенеруйте ключі.');
             }
         });
+
         document.getElementById('copy-private-key').addEventListener('click', () => {
             const text = document.getElementById('private-key').value;
             if (text.trim()) {
@@ -419,6 +438,7 @@
                 alert('Спочатку згенеруйте ключі.');
             }
         });
+
         // Копіювання результату
         document.getElementById('copy-result').addEventListener('click', () => {
             const text = document.getElementById('universal-result').textContent;
@@ -426,27 +446,27 @@
                 copyToClipboard(text, 'copy-result');
             }
         });
-        document.getElementById('encrypt-button').addEventListener('click', async () => {
-            clearError('encrypt-data-error');
-            clearError('encrypt-public-key-error');
+
+        document.getElementById('sign-button').addEventListener('click', async () => {
+            clearError('sign-data-error');
+            clearError('sign-private-key-error');
             clearUniversalResult();
-            const dataInput = document.getElementById('encrypt-data');
-            const publicKeyInput = document.getElementById('encrypt-public-key');
-            const hybridCheckbox = document.getElementById('encrypt-hybrid');
-            const isFileInput = encryptDataIsFile;
+            const dataInput = document.getElementById('sign-data');
+            const privateKeyInput = document.getElementById('sign-private-key');
+            const isFileInput = signDataIsFile;
             let hasError = false;
             if (isFileInput && (!dataInput.files || !dataInput.files.length)) {
-                showError('encrypt-data-error', 'Виберіть файл для шифрування');
+                showError('sign-data-error', 'Виберіть файл для підпису');
                 hasError = true;
             } else if (!isFileInput && !dataInput.value.trim()) {
-                showError('encrypt-data-error', 'Введіть дані для шифрування');
+                showError('sign-data-error', 'Введіть дані для підпису');
                 hasError = true;
             }
-            if (encryptPublicKeyIsFile && (!publicKeyInput.files || !publicKeyInput.files.length)) {
-                showError('encrypt-public-key-error', 'Виберіть файл з публічним ключем');
+            if (signPrivateKeyIsFile && (!privateKeyInput.files || !privateKeyInput.files.length)) {
+                showError('sign-private-key-error', 'Виберіть файл з приватним ключем');
                 hasError = true;
-            } else if (!encryptPublicKeyIsFile && !publicKeyInput.value.trim()) {
-                showError('encrypt-public-key-error', 'Введіть публічний ключ');
+            } else if (!signPrivateKeyIsFile && !privateKeyInput.value.trim()) {
+                showError('sign-private-key-error', 'Введіть приватний ключ');
                 hasError = true;
             }
             if (hasError) return;
@@ -462,15 +482,116 @@
                 } else {
                     formData.append('data_file', dataInput.files[0]);
                 }
-                if (!encryptPublicKeyIsFile) {
+                if (!signPrivateKeyIsFile) {
+                    const keyText = privateKeyInput.value.trim();
+                    const keyBlob = new Blob([keyText], { type: 'text/plain' });
+                    formData.append('private_key_file', keyBlob, `private_key_${timestamp}.pem`);
+                } else {
+                    formData.append('private_key_file', privateKeyInput.files[0]);
+                }
+                const response = await fetch(`${CONFIG.API_URL_LAB_5}/sign`, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Помилка API');
+                }
+                let blob;
+                if (isFileInput) {
+                    blob = await processStream(response);
+                } else {
+                    blob = await response.blob();
+                }
+                const filename = `signature_${timestamp}.der`;
+                showUniversalResult(true, blob, filename, isFileInput);
+            } catch (e) {
+                clearUniversalResult();
+                const errorMessage = e.message || e.toString();
+                if (errorMessage.includes('no BEGIN PRIVATE KEY/END PRIVATE KEY delimiters')) {
+                    showError('sign-private-key-error', 'Помилка підпису: Невірний формат приватного ключа. Перевірте, чи це PEM-файл з delimiters BEGIN/END PRIVATE KEY.');
+                } else if (errorMessage.includes('Unable to load PEM file') || errorMessage.includes('MalformedFraming')) {
+                    showError('sign-private-key-error', 'Помилка підпису: Невірний або пошкоджений приватний ключ. Спробуйте згенерувати новий.');
+                } else {
+                    showError('sign-data-error', `Помилка підпису: ${errorMessage}`);
+                }
+            }
+        });
+
+        document.getElementById('verify-button').addEventListener('click', async () => {
+            clearError('verify-data-error');
+            clearError('verify-signature-error');
+            clearError('verify-public-key-error');
+            clearUniversalResult();
+            const dataInput = document.getElementById('verify-data');
+            const signatureInput = document.getElementById('verify-signature');
+            const publicKeyInput = document.getElementById('verify-public-key');
+            const isDataFile = verifyDataIsFile;
+            const isSignatureFile = verifySignatureIsFile;
+            let hasError = false;
+            if (isDataFile && (!dataInput.files || !dataInput.files.length)) {
+                showError('verify-data-error', 'Виберіть файл для верифікації');
+                hasError = true;
+            } else if (!isDataFile && !dataInput.value.trim()) {
+                showError('verify-data-error', 'Введіть дані для верифікації');
+                hasError = true;
+            }
+            if (isSignatureFile && (!signatureInput.files || !signatureInput.files.length)) {
+                showError('verify-signature-error', 'Виберіть файл з підписом');
+                hasError = true;
+            } else if (!isSignatureFile && !signatureInput.value.trim()) {
+                showError('verify-signature-error', 'Введіть hex підпису');
+                hasError = true;
+            }
+            if (verifyPublicKeyIsFile && (!publicKeyInput.files || !publicKeyInput.files.length)) {
+                showError('verify-public-key-error', 'Виберіть файл з публічним ключем');
+                hasError = true;
+            } else if (!verifyPublicKeyIsFile && !publicKeyInput.value.trim()) {
+                showError('verify-public-key-error', 'Введіть публічний ключ');
+                hasError = true;
+            }
+            if (hasError) return;
+
+            let signatureBytes;
+            if (!isSignatureFile) {
+                try {
+                    const hex = signatureInput.value.trim().replace(/\s/g, ''); // Видаляємо пробіли
+                    if (!/^[0-9a-fA-F]+$/.test(hex)) {
+                        throw new Error('Невірний формат hex');
+                    }
+                    signatureBytes = hexToUint8(hex);
+                } catch (e) {
+                    showError('verify-signature-error', 'Невірний формат hex підпису');
+                    return;
+                }
+            }
+
+            try {
+                const timestamp = getTimestamp();
+                const formData = new FormData();
+                if (!isDataFile) {
+                    const text = dataInput.value.trim();
+                    const encoder = new TextEncoder();
+                    const bytes = encoder.encode(text);
+                    const blob = new Blob([bytes], { type: 'text/plain' });
+                    formData.append('data_file', blob, `input_${timestamp}.txt`);
+                } else {
+                    formData.append('data_file', dataInput.files[0]);
+                }
+                if (!isSignatureFile) {
+                    const signatureBlob = new Blob([signatureBytes], { type: 'application/octet-stream' });
+                    formData.append('signature_file', signatureBlob, `signature_${timestamp}.der`);
+                } else {
+                    formData.append('signature_file', signatureInput.files[0]);
+                }
+                if (!verifyPublicKeyIsFile) {
                     const keyText = publicKeyInput.value.trim();
                     const keyBlob = new Blob([keyText], { type: 'text/plain' });
                     formData.append('public_key_file', keyBlob, `public_key_${timestamp}.pem`);
                 } else {
                     formData.append('public_key_file', publicKeyInput.files[0]);
                 }
-                const hybridParam = hybridCheckbox.checked ? '?hybrid=true' : '';
-                const response = await fetch(`${CONFIG.API_URL_LAB_4}/encrypt${hybridParam}`, {
+                const response = await fetch(`${CONFIG.API_URL_LAB_5}/verify`, {
                     method: 'POST',
                     body: formData
                 });
@@ -478,144 +599,18 @@
                     const errorData = await response.json();
                     throw new Error(errorData.detail || 'Помилка API');
                 }
-                let blob;
-                if (isFileInput) {
-                    blob = await processStream(response, true);
-                } else {
-                    blob = await response.blob();
-                }
-                const contentDisposition = response.headers.get('Content-Disposition');
-                let filename = `input_${timestamp}.enc`;
-                if (hybridCheckbox.checked) {
-                    filename = `input_${timestamp}_hybrid.enc`;
-                }
-                if (contentDisposition) {
-                    const filenameMatch = contentDisposition.match(/filename\*\=UTF-8''([^;]+)/);
-                    if (filenameMatch && filenameMatch[1]) {
-                        filename = filenameMatch[1];
-                    }
-                }
-                showUniversalResult(true, blob, filename, isFileInput);
+                const result = await response.json();
+                const filename = `verify_result_${timestamp}.json`; // Не використовується, бо немає download
+                showUniversalResult(false, null, filename, false, result.valid);
             } catch (e) {
                 clearUniversalResult();
                 const errorMessage = e.message || e.toString();
-              
                 if (errorMessage.includes('no BEGIN PUBLIC KEY/END PUBLIC KEY delimiters')) {
-                    showError('encrypt-public-key-error', 'Помилка шифрування: Невірний формат публічного ключа. Перевірте, чи це PEM-файл з delimiters BEGIN/END PUBLIC KEY.');
+                    showError('verify-public-key-error', 'Помилка верифікації: Невірний формат публічного ключа. Перевірте, чи це PEM-файл з delimiters BEGIN/END PUBLIC KEY.');
                 } else if (errorMessage.includes('Unable to load PEM file') || errorMessage.includes('MalformedFraming')) {
-                    showError('encrypt-public-key-error', 'Помилка шифрування: Невірний або пошкоджений публічний ключ. Спробуйте згенерувати новий.');
+                    showError('verify-public-key-error', 'Помилка верифікації: Невірний або пошкоджений публічний ключ. Спробуйте згенерувати новий.');
                 } else {
-                    showError('encrypt-data-error', `Помилка шифрування: ${errorMessage}`);
-                }
-            }
-        });
-        document.getElementById('decrypt-button').addEventListener('click', async () => {
-            clearError('decrypt-data-error');
-            clearError('decrypt-private-key-error');
-            clearUniversalResult();
-            const dataInput = document.getElementById('decrypt-data');
-            const privateKeyInput = document.getElementById('decrypt-private-key');
-            const hybridCheckbox = document.getElementById('decrypt-hybrid');
-            const isFileInput = decryptDataIsFile;
-            let hasError = false;
-            if (isFileInput && (!dataInput.files || !dataInput.files.length)) {
-                showError('decrypt-data-error', 'Виберіть файл для дешифрування');
-                hasError = true;
-            } else if (!isFileInput && !dataInput.value.trim()) {
-                showError('decrypt-data-error', 'Введіть base64 для дешифрування');
-                hasError = true;
-            }
-            if (decryptPrivateKeyIsFile && (!privateKeyInput.files || !privateKeyInput.files.length)) {
-                showError('decrypt-private-key-error', 'Виберіть файл з приватним ключем');
-                hasError = true;
-            } else if (!decryptPrivateKeyIsFile && !privateKeyInput.value.trim()) {
-                showError('decrypt-private-key-error', 'Введіть приватний ключ');
-                hasError = true;
-            }
-            if (hasError) return;
-            let keyText = '';
-            if (decryptPrivateKeyIsFile) {
-                try {
-                    keyText = await readFileAsText(privateKeyInput.files[0]);
-                } catch (e) {
-                    showError('decrypt-private-key-error', e.message);
-                    return;
-                }
-            } else {
-                keyText = privateKeyInput.value.trim();
-            }
-            if (keyText.includes('-----BEGIN PUBLIC KEY-----')) {
-                showError('decrypt-private-key-error', 'Помилка дешифрування: Введено публічний ключ замість приватного. Використовуйте приватний ключ для дешифрування.');
-                return;
-            }
-            try {
-                const timestamp = getTimestamp();
-                const formData = new FormData();
-                if (!isFileInput) {
-                    const base64 = dataInput.value.trim();
-                    try {
-                        const binaryString = atob(base64);
-                        const bytes = new Uint8Array(binaryString.length);
-                        for (let i = 0; i < binaryString.length; i++) {
-                            bytes[i] = binaryString.charCodeAt(i);
-                        }
-                        const blob = new Blob([bytes], { type: 'application/octet-stream' });
-                        formData.append('encrypted_file', blob, `input_${timestamp}.enc`);
-                    } catch (decodeError) {
-                        throw new Error('Невірний формат base64');
-                    }
-                } else {
-                    formData.append('encrypted_file', dataInput.files[0]);
-                }
-                if (!decryptPrivateKeyIsFile) {
-                    const keyBlob = new Blob([keyText], { type: 'text/plain' });
-                    formData.append('private_key_file', keyBlob, `private_key_${timestamp}.pem`);
-                } else {
-                    formData.append('private_key_file', privateKeyInput.files[0]);
-                }
-                const hybridParam = hybridCheckbox.checked ? '?hybrid=true' : '';
-                const response = await fetch(`${CONFIG.API_URL_LAB_4}/decrypt${hybridParam}`, {
-                    method: 'POST',
-                    body: formData
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Помилка API');
-                }
-                let blob;
-                if (isFileInput) {
-                    blob = await processStream(response, false);
-                } else {
-                    blob = await response.blob();
-                }
-                const contentDisposition = response.headers.get('Content-Disposition');
-                let filename = `input_${timestamp}.txt`;
-                if (hybridCheckbox.checked) {
-                    filename = `input_${timestamp}_hybrid.txt`;
-                }
-                if (contentDisposition) {
-                    const filenameMatch = contentDisposition.match(/filename\*\=UTF-8''([^;]+)/);
-                    if (filenameMatch && filenameMatch[1]) {
-                        filename = filenameMatch[1];
-                    }
-                }
-                showUniversalResult(false, blob, filename, isFileInput);
-            } catch (e) {
-                clearUniversalResult();
-                const errorMessage = e.message || e.toString();
-              
-                if (errorMessage.includes('no BEGIN PRIVATE KEY/END PRIVATE KEY delimiters')) {
-                    showError('decrypt-private-key-error', 'Помилка дешифрування: Невірний формат приватного ключа. Перевірте, чи це PEM-файл з delimiters BEGIN/END PRIVATE KEY.');
-                } else if (errorMessage.includes('Unable to load PEM file') || errorMessage.includes('MalformedFraming')) {
-                    showError('decrypt-private-key-error', 'Помилка дешифрування: Невірний або пошкоджений приватний ключ. Спробуйте згенерувати новий.');
-                } else if (errorMessage.includes('Invalid key size') && errorMessage.includes('AES')) {
-                    showError('decrypt-data-error', 'Помилка дешифрування: Файл не зашифровано гібридним режимом. Увімкніть звичайний режим дешифрування.');
-                } else if (errorMessage.includes('Decryption failed') && !errorMessage.includes('AES')) {
-                    showError('decrypt-data-error', 'Помилка дешифрування: Файл зашифровано гібридним режимом. Увімкніть гібридний режим дешифрування.');
-                } else if (errorMessage === 'Failed to fetch') {
-                    showError('decrypt-data-error', 'Помилка дешифрування: Файл пошкоджено або невірний ключ. Спробуйте інший файл/ключ.');
-                } else {
-                    showError('decrypt-data-error', `Помилка дешифрування: ${errorMessage}`);
+                    showError('verify-data-error', `Помилка верифікації: ${errorMessage}`);
                 }
             }
         });

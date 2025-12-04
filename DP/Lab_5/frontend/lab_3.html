@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>RC5 Шифрування/Дешифрування</title>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="static/styles_3.css">
+</head>
+<body>
+    <div class="container">
+        <h1>RC5 Шифрування/Дешифрування</h1>
+
+        <div class="sections">
+            <div class="section">
+                <h2>Шифрування</h2>
+                
+                <div class="input-section">
+                    <label for="encrypt-data">Введіть дані для шифрування:</label>
+                    <div class="input-group">
+                        <input id="encrypt-data" type="text" placeholder="Введіть текст" class="input-field">
+                        <button id="encrypt-data-switch" class="switch-button">Вибрати файл</button>
+                    </div>
+                    <div id="encrypt-data-error" class="error"></div>
+                </div>
+
+                <div class="input-section">
+                    <label for="encrypt-password">Введіть пароль (ключ):</label>
+                    <div class="input-group">
+                        <input id="encrypt-password" type="text" placeholder="Введіть пароль" class="input-field">
+                        <button id="encrypt-password-switch" class="switch-button">Вибрати файл з паролем</button>
+                    </div>
+                    <div id="encrypt-password-error" class="error"></div>
+                </div>
+
+                <button id="encrypt-button" class="action-button">Шифрувати</button>
+            </div>
+
+            <div class="section">
+                <h2>Дешифрування</h2>
+                
+                <div class="input-section">
+                    <label for="decrypt-data">Введіть дані для дешифрування (base64 або файл):</label>
+                    <div class="input-group">
+                        <input id="decrypt-data" type="text" placeholder="Введіть base64" class="input-field">
+                        <button id="decrypt-data-switch" class="switch-button">Вибрати файл</button>
+                    </div>
+                    <div id="decrypt-data-error" class="error"></div>
+                </div>
+
+                <div class="input-section">
+                    <label for="decrypt-password">Введіть пароль (ключ):</label>
+                    <div class="input-group">
+                        <input id="decrypt-password" type="text" placeholder="Введіть пароль" class="input-field">
+                        <button id="decrypt-password-switch" class="switch-button">Вибрати файл з паролем</button>
+                    </div>
+                    <div id="decrypt-password-error" class="error"></div>
+                </div>
+
+                <button id="decrypt-button" class="action-button">Дешифрувати</button>
+            </div>
+        </div>
+
+        <div id="universal-result-section" class="universal-result-section">
+            <h3>Результат</h3>
+            <div id="universal-result" class="result"></div>
+            <div id="tracking"></div>
+            <button id="load-more" class="action-button" style="display: none;" onclick="loadMore()">Дозавантажити</button>
+            <button id="download-button" class="download-button" style="display: none;">Завантажити файл</button>
+        </div>
+
+        <br>
+        <a href="/" class="back-link">Назад до меню</a>
+    </div>
+
+    <script src="/config.js"></script>
+    <script>
+        let encryptDataIsFile = false;
+        let encryptPasswordIsFile = false;
+        let decryptDataIsFile = false;
+        let decryptPasswordIsFile = false;
+
+        let currentBlob = null;
+        let currentFilename = '';
+        let resultChunks = [];
+        let displayedChunkIndex = 0;
+        const chunkSize = 32; 
+        const batchSize = 1; 
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function clearError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+
+        function uint8ToString(uint8) {
+            let str = '';
+            const chars = new Array(uint8.length);
+            for (let i = 0; i < uint8.length; ++i) {
+                chars[i] = String.fromCharCode(uint8[i]);
+            }
+            str = chars.join('');
+            return str;
+        }
+
+        function splitChunk(str) {
+            let chunks = [];
+            for (let i = 0; i < str.length; i += chunkSize) {
+                chunks.push(str.slice(i, i + chunkSize));
+            }
+            return chunks;
+        }
+
+        function toggleInput(switchId, inputId, isFile, buttonTextFile, buttonTextText, errorIds, placeholderText, placeholderFile) {
+            const switchButton = document.getElementById(switchId);
+            const inputContainer = document.getElementById(inputId).parentElement;
+            const currentInput = document.getElementById(inputId);
+            const newType = isFile ? 'text' : 'file';
+            const newInput = document.createElement('input');
+            newInput.id = inputId;
+            newInput.type = newType;
+            newInput.className = 'input-field';
+            newInput.placeholder = newType === 'text' ? placeholderText : placeholderFile;
+            inputContainer.replaceChild(newInput, currentInput);
+            switchButton.textContent = isFile ? buttonTextFile : buttonTextText;
+            errorIds.forEach(id => clearError(id));
+        }
+
+        document.getElementById('encrypt-data-switch').addEventListener('click', () => {
+            toggleInput('encrypt-data-switch', 'encrypt-data', encryptDataIsFile, 'Вибрати файл', 'Ввести текст', ['encrypt-data-error', 'encrypt-password-error'], 'Введіть текст', '');
+            encryptDataIsFile = !encryptDataIsFile;
+        });
+
+        document.getElementById('encrypt-password-switch').addEventListener('click', () => {
+            toggleInput('encrypt-password-switch', 'encrypt-password', encryptPasswordIsFile, 'Вибрати файл з паролем', 'Ввести пароль', ['encrypt-data-error', 'encrypt-password-error'], 'Введіть пароль', '');
+            encryptPasswordIsFile = !encryptPasswordIsFile;
+        });
+
+        document.getElementById('decrypt-data-switch').addEventListener('click', () => {
+            toggleInput('decrypt-data-switch', 'decrypt-data', decryptDataIsFile, 'Вибрати файл', 'Ввести base64', ['decrypt-data-error', 'decrypt-password-error'], 'Введіть base64', '');
+            decryptDataIsFile = !decryptDataIsFile;
+        });
+
+        document.getElementById('decrypt-password-switch').addEventListener('click', () => {
+            toggleInput('decrypt-password-switch', 'decrypt-password', decryptPasswordIsFile, 'Вибрати файл з паролем', 'Ввести пароль', ['decrypt-data-error', 'decrypt-password-error'], 'Введіть пароль', '');
+            decryptPasswordIsFile = !decryptPasswordIsFile;
+        });
+
+        async function downloadBlob(blob, filename) {
+            if (window.showSaveFilePicker) {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: filename,
+                    types: [{ description: 'Binary Files', accept: { 'application/octet-stream': ['.enc', '.txt'] } }]
+                });
+                const writable = await handle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+                return true;
+            } else {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                return true;
+            }
+        }
+
+        function loadMore() {
+            const resultDiv = document.getElementById('universal-result');
+            const numBatches = Math.min(batchSize, resultChunks.length - displayedChunkIndex);
+            const nextBatch = resultChunks.slice(displayedChunkIndex, displayedChunkIndex + numBatches);
+            resultDiv.textContent += nextBatch.join('');
+            displayedChunkIndex += numBatches;
+            const totalSymbols = resultChunks.reduce((sum, chunk) => sum + chunk.length, 0);
+            document.getElementById('tracking').textContent = `Відображено: ${resultDiv.textContent.length} з ${totalSymbols} символів`;
+            document.getElementById('load-more').style.display = displayedChunkIndex < resultChunks.length ? 'inline-block' : 'none';
+        }
+
+        async function processStream(response, isEncrypt) {
+            const reader = response.body.getReader();
+            const fullChunks = []; 
+            const decoder = new TextDecoder();
+            let remainder = '';
+            resultChunks = [];
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                if (value) {
+                    fullChunks.push(value); 
+
+                    let chunkStr;
+                    if (isEncrypt) {
+                        const uint8 = new Uint8Array(value);
+                        const str = uint8ToString(uint8);
+                        chunkStr = btoa(str);
+                    } else {
+                        const decoded = decoder.decode(value, { stream: !done });
+                        if (remainder) {
+                            chunkStr = remainder + decoded;
+                            remainder = '';
+                        } else {
+                            chunkStr = decoded;
+                        }
+                        if (done && remainder) {
+                            chunkStr += remainder;
+                        }
+                    }
+                    const smallChunks = splitChunk(chunkStr);
+                    resultChunks.push(...smallChunks);
+                }
+            }
+
+            if (fullChunks.length > 0) {
+                const totalLength = fullChunks.reduce((sum, chunk) => sum + chunk.length, 0);
+                const fullArray = new Uint8Array(totalLength);
+                let offset = 0;
+                for (const chunk of fullChunks) {
+                    fullArray.set(new Uint8Array(chunk), offset);
+                    offset += chunk.length;
+                }
+                return new Blob([fullArray]);
+            }
+            return new Blob([]);
+        }
+
+        async function showUniversalResult(isEncrypt, blob, filename, isFileInput) {
+            const resultSection = document.getElementById('universal-result-section');
+            const resultDiv = document.getElementById('universal-result');
+            const downloadButton = document.getElementById('download-button');
+            const loadMoreButton = document.getElementById('load-more');
+            const tracking = document.getElementById('tracking');
+
+            resultSection.style.display = 'block';
+            downloadButton.style.display = 'inline-block';
+            resultDiv.textContent = '';
+
+            currentBlob = blob;
+            currentFilename = filename;
+
+            if (!isFileInput) {
+                const buffer = await blob.arrayBuffer();
+                let content;
+                if (isEncrypt) {
+                    const uint8 = new Uint8Array(buffer);
+                    const str = uint8ToString(uint8);
+                    content = btoa(str);
+                } else {
+                    const uint8 = new Uint8Array(buffer);
+                    content = new TextDecoder('utf-8').decode(uint8);
+                }
+                resultDiv.textContent = content;
+                loadMoreButton.style.display = 'none';
+                tracking.textContent = '';
+            } else {
+                displayedChunkIndex = 0;
+                loadMore();
+                loadMoreButton.style.display = displayedChunkIndex < resultChunks.length ? 'inline-block' : 'none';
+            }
+        }
+
+        function clearUniversalResult() {
+            const resultSection = document.getElementById('universal-result-section');
+            const resultDiv = document.getElementById('universal-result');
+            const downloadButton = document.getElementById('download-button');
+            const loadMoreButton = document.getElementById('load-more');
+            const tracking = document.getElementById('tracking');
+            resultSection.style.display = 'none';
+            resultDiv.textContent = '';
+            downloadButton.style.display = 'none';
+            loadMoreButton.style.display = 'none';
+            tracking.textContent = '';
+            resultChunks = [];
+            displayedChunkIndex = 0;
+            currentBlob = null;
+            currentFilename = '';
+        }
+
+        document.getElementById('download-button').addEventListener('click', async () => {
+            if (currentBlob && currentFilename) {
+                await downloadBlob(currentBlob, currentFilename);
+            }
+        });
+
+        function getTimestamp() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+        }
+
+        document.getElementById('encrypt-button').addEventListener('click', async () => {
+            clearError('encrypt-data-error');
+            clearError('encrypt-password-error');
+            clearUniversalResult();
+
+            const dataInput = document.getElementById('encrypt-data');
+            const passwordInput = document.getElementById('encrypt-password');
+            const isFileInput = encryptDataIsFile;
+
+            let hasError = false;
+
+            if (isFileInput && (!dataInput.files || !dataInput.files.length)) {
+                showError('encrypt-data-error', 'Виберіть файл для шифрування');
+                hasError = true;
+            } else if (!isFileInput && !dataInput.value.trim()) {
+                showError('encrypt-data-error', 'Введіть дані для шифрування');
+                hasError = true;
+            }
+
+            if (encryptPasswordIsFile && (!passwordInput.files || !passwordInput.files.length)) {
+                showError('encrypt-password-error', 'Виберіть файл з паролем');
+                hasError = true;
+            } else if (!encryptPasswordIsFile && !passwordInput.value.trim()) {
+                showError('encrypt-password-error', 'Введіть пароль');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            try {
+                const timestamp = getTimestamp();
+                const formData = new FormData();
+                if (!isFileInput) {
+                    const text = dataInput.value.trim();
+                    const encoder = new TextEncoder();
+                    const bytes = encoder.encode(text);
+                    const blob = new Blob([bytes], { type: 'text/plain' });
+                    formData.append('file', blob, `input_${timestamp}.txt`);
+                } else {
+                    formData.append('file', dataInput.files[0]);
+                }
+                if (!encryptPasswordIsFile) {
+                    const passwordText = passwordInput.value.trim();
+                    const encoder = new TextEncoder();
+                    const bytes = encoder.encode(passwordText);
+                    const blob = new Blob([bytes], { type: 'text/plain' });
+                    formData.append('passfile', blob, `password_${timestamp}.txt`);
+                } else {
+                    formData.append('passfile', passwordInput.files[0]);
+                }
+
+                const response = await fetch(`${CONFIG.API_URL_LAB_3}/encrypt`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Помилка API');
+                }
+
+                let blob;
+                if (isFileInput) {
+                    blob = await processStream(response, true);
+                } else {
+                    blob = await response.blob();
+                }
+
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = `input_${timestamp}.enc`;
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename\*\=UTF-8''([^;]+)/);
+                    if (filenameMatch && filenameMatch[1]) {
+                        filename = filenameMatch[1];
+                    }
+                }
+                showUniversalResult(true, blob, filename, isFileInput);
+            } catch (e) {
+                showError('encrypt-data-error', `Помилка шифрування: ${e.message}`);
+            }
+        });
+
+        document.getElementById('decrypt-button').addEventListener('click', async () => {
+            clearError('decrypt-data-error');
+            clearError('decrypt-password-error');
+            clearUniversalResult();
+
+            const dataInput = document.getElementById('decrypt-data');
+            const passwordInput = document.getElementById('decrypt-password');
+            const isFileInput = decryptDataIsFile;
+
+            let hasError = false;
+
+            if (isFileInput && (!dataInput.files || !dataInput.files.length)) {
+                showError('decrypt-data-error', 'Виберіть файл для дешифрування');
+                hasError = true;
+            } else if (!isFileInput && !dataInput.value.trim()) {
+                showError('decrypt-data-error', 'Введіть base64 для дешифрування');
+                hasError = true;
+            }
+
+            if (decryptPasswordIsFile && (!passwordInput.files || !passwordInput.files.length)) {
+                showError('decrypt-password-error', 'Виберіть файл з паролем');
+                hasError = true;
+            } else if (!decryptPasswordIsFile && !passwordInput.value.trim()) {
+                showError('decrypt-password-error', 'Введіть пароль');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            try {
+                let timestamp = getTimestamp();
+                const formData = new FormData();
+                if (!isFileInput) {
+                    const base64 = dataInput.value.trim();
+                    try {
+                        const binaryString = atob(base64);
+                        const bytes = new Uint8Array(binaryString.length);
+                        for (let i = 0; i < binaryString.length; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+                        const blob = new Blob([bytes], { type: 'application/octet-stream' });
+                        formData.append('encrypted_file', blob, `input_${timestamp}.enc`);
+                    } catch (decodeError) {
+                        throw new Error('Невірний формат base64');
+                    }
+                } else {
+                    formData.append('encrypted_file', dataInput.files[0]);
+                }
+                if (!decryptPasswordIsFile) {
+                    const passwordText = passwordInput.value.trim();
+                    const encoder = new TextEncoder();
+                    const bytes = encoder.encode(passwordText);
+                    const blob = new Blob([bytes], { type: 'text/plain' });
+                    formData.append('passfile', blob, `password_${timestamp}.txt`);
+                } else {
+                    formData.append('passfile', passwordInput.files[0]);
+                }
+
+                const response = await fetch(`${CONFIG.API_URL_LAB_3}/decrypt`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Помилка API');
+                }
+
+                let blob;
+                if (isFileInput) {
+                    blob = await processStream(response, false);
+                } else {
+                    blob = await response.blob();
+                }
+
+                const contentDisposition = response.headers.get('Content-Disposition');
+                timestamp = getTimestamp();
+                let filename = `input_${timestamp}.txt`;
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename\*\=UTF-8''([^;]+)/);
+                    if (filenameMatch && filenameMatch[1]) {
+                        filename = filenameMatch[1];
+                    }
+                }
+                showUniversalResult(false, blob, filename, isFileInput);
+            } catch (e) {
+                if (e.message.includes("Failed to fetch") || e.message.includes("Decryption error") || e.message.includes("network error")) {
+                    showError('decrypt-data-error', `Помилка дешифрування: Пароль невірний або файл пошкоджено`);
+                } else {
+                    showError('decrypt-data-error', `Помилка дешифрування: ${e.message}`);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
