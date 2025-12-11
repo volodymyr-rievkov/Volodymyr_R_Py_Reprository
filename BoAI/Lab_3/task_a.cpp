@@ -91,10 +91,11 @@ double findRayDist(double x, double y, double angle) {
         double v2x = p2.x - p1.x;
         double v2y = p2.y - p1.y;
         double det = v2x * dy - v2y * dx;
-        if (std::abs(det) < 1e-9) continue;
+        if (abs(det) < 1e-9) continue;
         double t = (v2x * v1y - v2y * v1x) / det;
         double u = (dx * v1y - dy * v1x) / det;
-        if (t > 0 && u >= 0 && u <= 1) {
+        if (t > 0 && u >= 0 && u <= 1) 
+        {
             if (t < minDist) minDist = t;
         }
     }
@@ -147,9 +148,11 @@ void resampleParticles(vector<Particle>& particles) {
     double r = uniform_real_distribution<double>(0, PARTICLE_WEIGHT)(rng);
     double c = particles[0].weight;
     int i = 0;
-    for (int m = 0; m < PARTICLES_COUNT; ++m) {
+    for (int m = 0; m < PARTICLES_COUNT; m++) 
+    {
         double U = r + m * PARTICLE_WEIGHT;
-        while (U > c && i < PARTICLES_COUNT - 1) {
+        while (U > c && i < PARTICLES_COUNT - 1) 
+        {
             i++;
             c += particles[i].weight;
         }
@@ -198,11 +201,10 @@ bool readInput() {
 
 Point estimatePos(vector<Particle>& particles) {
     double x = 0, y = 0;
-    double wSum = 0;
-    for (const auto& p : particles) {
+    for (const auto& p : particles) 
+    {
         x += p.p.x * p.weight;
         y += p.p.y * p.weight;
-        wSum += p.weight;
     }
     return {x, y};
 }
@@ -211,7 +213,6 @@ double calculateError(double x, double y, const vector<double>& scan, int K) {
     if (!isInside(x, y)) return 1e18;
     double error = 0;
     int step = max(1, K / RAYS_PER_OPT);
-    int count = 0;
     double errorBound = 5.0;
     for (int i = 0; i < K; i += step) {
         double angle = i * (2 * PI / K);
@@ -220,7 +221,6 @@ double calculateError(double x, double y, const vector<double>& scan, int K) {
         if (diff > errorBound) diff = errorBound;
         if (diff < -errorBound) diff = -errorBound;
         error += diff * diff;
-        count++;
     }
     return error;
 }
