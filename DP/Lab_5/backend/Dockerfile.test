@@ -9,7 +9,6 @@ RUN python -m pip install --upgrade pip \
     && python -m pip install colorama coverage pytest pytest-asyncio 
 
 COPY . .
-COPY .coveragerc .
 
 RUN mkdir -p /app/reports
 
@@ -18,6 +17,10 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTEST_ADDOPTS="--color=yes"
 
 CMD ["sh", "-c", "\
-coverage run --branch --source=/app --omit='*/main.py' -m pytest /app/tests \
---maxfail=1 --disable-warnings -v --color=yes && \
-coverage xml -o /app/reports/coverage-report.xml"]
+mkdir -p /app/reports && \
+coverage run --branch --source=/app --omit=*/main.py -m pytest /app/tests \
+--maxfail=1 --disable-warnings -v && \
+coverage report && \
+coverage xml -o /app/reports/coverage-report.xml && \
+coverage html -d /app/reports/html"]
+
