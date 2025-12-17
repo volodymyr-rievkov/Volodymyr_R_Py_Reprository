@@ -152,8 +152,6 @@ def boxplot_individual_regions(df, regions):
         df_region = df[df['region'] == region]
         cases = df_region['positive_cases']
         
-        # --- РОЗРАХУНОК СТАТИСТИКИ ---
-        # Отримуємо базові статистики через describe()
         stats = cases.describe()
         
         Q1 = stats['25%']
@@ -164,16 +162,12 @@ def boxplot_individual_regions(df, regions):
         maximum = stats['max']
         mean_val = stats['mean']
         
-        # Розрахунок меж вусів (стандартно 1.5 * IQR)
-        # Викидами вважаються точки за межами [Q1 - 1.5*IQR, Q3 + 1.5*IQR]
         lower_bound = Q1 - 1.5 * IQR
         upper_bound = Q3 + 1.5 * IQR
         
-        # Знаходимо реальні викиди в даних
         outliers = cases[(cases < lower_bound) | (cases > upper_bound)]
         num_outliers = len(outliers)
         
-        # --- ВИВІД У КОНСОЛЬ ---
         logging.info(f"\n{'='*40}")
         logging.info(f"STATISTICS FOR REGION: {region}")
         logging.info(f"{'-'*40}")
@@ -192,7 +186,6 @@ def boxplot_individual_regions(df, regions):
         logging.info(f"Outliers Count: {num_outliers}")
         logging.info(f"{'='*40}\n")
 
-        # --- ПОБУДОВА ГРАФІКА ---
         plt.figure(figsize=(8,6))
         plt.boxplot(
             cases,
@@ -207,7 +200,6 @@ def boxplot_individual_regions(df, regions):
         plt.title(f'Boxplot of Positive Influenza Cases - {region}')
         plt.ylabel('Positive Cases')
         
-        # Масштабування осі Y для кращої видимості
         upper_limit = cases.quantile(0.95) * 1.05
         plt.ylim(0, max(upper_limit, maximum))
         
