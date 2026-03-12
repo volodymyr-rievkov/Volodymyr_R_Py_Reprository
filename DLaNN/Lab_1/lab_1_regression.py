@@ -8,13 +8,13 @@ from warnings import filterwarnings
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.callbacks import EarlyStopping
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.callbacks import EarlyStopping
 
 filterwarnings('ignore', category=UserWarning)
 
-os.makedirs("data/plots_regression", exist_ok=True)
+os.makedirs("DLaNN/Lab_1/data/plots_regression", exist_ok=True)
 
 def load_and_split_data(file_path, target_col):
     """
@@ -103,7 +103,7 @@ def plot_learning_curves(histories_dict, title, filename):
     plt.ylabel('Validation Loss (MSE)')
     plt.legend()
     plt.grid(True)
-    plt.savefig(f'data/plots_regression/{filename}')
+    plt.savefig(f'DLaNN/Lab_1/data/plots_regression/{filename}')
     plt.close()
     print(f"[INFO] Plot saved to 'data/plots_regression/{filename}")
 
@@ -114,7 +114,7 @@ def plot_duration_histogram(durations, title, filename):
     plt.bar(names, times, color='skyblue', edgecolor='navy')
     plt.title(title)
     plt.ylabel('Seconds')
-    plt.savefig(f'data/plots_regression/{filename}')
+    plt.savefig(f'DLaNN/Lab_1/data/plots_regression/{filename}')
     plt.close()
 
 def plot_overfitting_analysis(history, title, filename):
@@ -129,7 +129,7 @@ def plot_overfitting_analysis(history, title, filename):
     plt.ylabel('Loss (MSE)')
     plt.legend()
     plt.grid(True, linestyle='--', alpha=0.7)
-    plt.savefig(f'data/plots_regression/{filename}')
+    plt.savefig(f'DLaNN/Lab_1/data/plots_regression/{filename}')
     plt.close()
     print(f"[INFO] Overfitting analysis plot saved to 'data/plots_regression/{filename}")
 
@@ -181,7 +181,7 @@ def run_activation_experiment(X_train, y_train, X_val, y_val, X_test, y_test, la
 
 if __name__ == "__main__":
     # Define dataset path and target column
-    DATA_FILE = 'data/hourly_wages_data.csv'
+    DATA_FILE = 'DLaNN/Lab_1/data/hourly_wages_data.csv'
     TARGET = 'wage_per_hour'
     
     # Define architecture
