@@ -14,3 +14,5 @@ fact_cols = ['Country_Key', 'Time_Key', 'Country_Population', 'Fertility_Rate', 
 ds_location = Dataset(uri=os.path.join(data_path, OuputJsonFiles.dim_location), extra={'columns': location_cols})
 ds_time = Dataset(uri=os.path.join(data_path, OuputJsonFiles.dim_time), extra={'columns': time_cols})
 ds_fact = Dataset(uri=os.path.join(data_path, OuputJsonFiles.fact_demographics), extra={'columns': fact_cols})
+
+ds_warehouse_ready = Dataset("postgres://airflow/warehouse_ready")

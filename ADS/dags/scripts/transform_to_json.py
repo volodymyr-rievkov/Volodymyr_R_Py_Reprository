@@ -3,7 +3,7 @@ import os
 import json
 from airflow.models import Variable
 from airflow.hooks.base import BaseHook
-from config import CONN_RAW_DATA, VAR_RAW_DATA
+from config import CONN_RAW_DATA, VAR_RAW_DATA, DemographicSheets
 from datasets import ds_location, ds_time, ds_fact
 
 
@@ -14,49 +14,47 @@ def get_file_path():
     return os.path.join(base_path, file_name)
 
 
-def transform_location_data(sheet, **context):
+def transform_location_data_task(**context):
+    print("Start transform_location_data_task")
+    sheet =  DemographicSheets.countries_meta
     path = get_file_path()
     df = pd.read_excel(path, sheet_name=sheet['name'])
     
     dim_location = df[sheet['columns']].drop_duplicates()
-    
     dim_location.columns = ds_location.extra['columns']
-    
     dim_location.insert(0, 'Country_Key', range(1, len(dim_location) + 1))
-    
     dim_location.to_json(ds_location.uri, orient='records', indent=4)
+    print(f"Finish transform_location_data_task. Loaded {len(dim_location)} countries")
 
 
-def transform_time_data(sheet, **context):
+def transform_time_data_task(**context):
+    print("Start transform_time_data_task")
+    sheet =  DemographicSheets.countries_population
     path = get_file_path()
     df = pd.read_excel(path, sheet_name=sheet['name'])
     
     years = [col for col in df.columns if str(col).isdigit()]
-    
     dim_time = pd.DataFrame({'Year': years})
     dim_time['Year'] = dim_time['Year'].astype(int)
     dim_time = dim_time.drop_duplicates().sort_values('Year')
-    
     dim_time.columns = ds_time.extra['columns']
     dim_time.insert(0, 'Time_Key', range(1, len(dim_time) + 1))
-    
     dim_time.to_json(ds_time.uri, orient='records', indent=4)
+    print(f"Finish transform_time_data_task. Loaded {len(dim_time)} years")
 
 
-def build_fact_table(sheets, **context):
+def build_fact_table_task(**context):
+    print("Start build_fact_table_task")
+    sheets = [DemographicSheets.countries_population, DemographicSheets.life_expectancy, DemographicSheets.fertility_rate]
     path = get_file_path()
-    
     dim_l = pd.read_json(ds_location.uri)
     dim_t = pd.read_json(ds_time.uri)
     
     all_metrics = []
-
     for sheet in sheets:
         df = pd.read_excel(path, sheet_name=sheet['name'])
-        
         id_vars = ['Country Code']
         year_cols = [col for col in df.columns if str(col).isdigit()]
-        
         df_long = df.melt(id_vars=id_vars, value_vars=year_cols, 
                           var_name='Year', value_name=sheet['name'])
         df_long['Year'] = df_long['Year'].astype(int)
@@ -68,13 +66,10 @@ def build_fact_table(sheets, **context):
 
     fact_df = fact_df.merge(dim_l[['Country_Key', 'Country_Code']], left_on='Country Code', right_on='Country_Code')
     fact_df = fact_df.merge(dim_t[['Time_Key', 'Year']], on='Year')
-
     value_cols_names = [sheet['name'] for sheet in sheets] # sheet names which were assigned to columns
     value_cols_rename = ds_fact.extra['columns'][2:] # without country_key and time_key
-
     fact_df = fact_df.rename(columns=dict(zip(value_cols_names, value_cols_rename))) # rename columns
-    
     final_fact = fact_df[ds_fact.extra['columns']]
     final_fact.insert(0, 'Fact_Key', range(1, len(final_fact) + 1))
-
     final_fact.to_json(ds_fact.uri, orient='records', indent=4)
+    print(f"Finish build_fact_table_task. Loaded {len(final_fact)} facts")
