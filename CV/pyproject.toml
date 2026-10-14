@@ -1,0 +1,115 @@
+[project]
+name = "cv"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.4",
+]
+
+[tool.ruff]
+extend-exclude = [
+    ".github"
+]
+line-length = 120
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    "I",      # isort
+    "N",      # pep8-naming
+    "AIR",    # Airflow
+    "A",      # flake8-builtins
+    "B",      # flake8-bugbear
+    "S",      # flake8-bandit
+    "ANN",    # flake8-annotations
+    "ASYNC",  # flake8-async
+    "BLE",    # flake8-blind-except
+    "FBT",    # flake8-boolean-trap
+    "COM",    # flake8-commas
+    "C4",     # flake8-comprehensions
+    "T10",    # flake8-debugger
+    "EXE",    # flake8-executable
+    "ISC",    # flake8-implicit-str-concat
+    "ICN",    # flake8-import-conventions
+    "LOG",    # flake8-logging
+    "G",      # flake8-logging-format
+    "INP",    # flake8-no-pep420
+    "PIE",    # flake8-pie
+    "T201",   # print, derived from the flake8-print linter
+    "PYI",    # flake8-pyi
+    "PT",     # flake8-pytest-style
+    "Q",      # flake8-quotes
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "SLF",    # flake8-self
+    "SIM",    # flake8-simplify
+    "SLOT",   # flake8-slots
+    "TID",    # flake8-tidy-imports
+    "TD",     # flake8-todos
+    "TC",     # flake8-type-checking
+    "ARG",    # flake8-unused-arguments
+    "PTH",    # flake8-use-pathlib
+    "FLY",    # flynt
+    "C90",    # mccabe
+    "NPY",    # NumPy-specific rules
+    "PD",     # pandas-vet
+    "PERF",   # Perflint
+    "E", "W", # pycodestyle
+    "F",      # Pyflakes
+    "PGH",    # pygrep-hooks
+    "PL",     # Pylint
+    "PLE",    # Error
+    "PLR",    # Refactor
+    "PLW",    # Warning
+    "UP",     # pyupgrade
+    "FURB",   # refurb
+    "RUF",    # Ruff-specific rules
+    "TRY",    # tryceratops
+]
+
+ignore = [
+    "Q000",    # replaces all single quotes to double quotes
+    "COM812",  # missing-trailing-comma, conflicts with formatter that fixes that
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    # Assertions should not be used for runtime validation of user input or to enforce interface constraints,
+    # however asserts are necessary in tests
+    "S101",
+    # Checks that public functions and methods have return type annotations.
+    # No need to add return type for test functions.
+    "ANN201",
+    # Requires creating of __init__.py.
+    # No need as test files are not modules.
+    "INP001",
+]
+# Lab scripts are standalone, not importable packages.
+"Lab_*/*.py" = ["INP001"]
+# Checks for module names that do not follow the snake_case naming convention or are otherwise invalid.
+"migrations/versions/*" = ["N999"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 3
+
+[tool.ruff.lint.pylint]
+max-nested-blocks = 3
+
+[tool.ruff.format]
+indent-style = "space"
+line-ending = "lf"
+quote-style = "double"
+
+
+[tool.mypy]
+mypy_path = "."
+explicit_package_bases = true
+namespace_packages = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["fsspec.*", "fake_useragent.*"]
+follow_untyped_imports = true
