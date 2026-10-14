@@ -1,0 +1,132 @@
+2026-05-21 01:04:25,961 [INFO] ============================================================
+2026-05-21 01:04:25,961 [INFO] Lab 6 — Time Series Forecasting: RNN / LSTM / GRU
+2026-05-21 01:04:25,961 [INFO] ============================================================
+2026-05-21 01:04:25,967 [INFO] 
+=======================================================
+CASE 1 — Signal Forecasting
+=======================================================
+2026-05-21 01:04:26,458 [INFO] Plot saved → outputs\case1_signals.png
+2026-05-21 01:04:35,905 [INFO] --- Signal: sin             | Cell: LSTM ---
+2026-05-21 01:04:36,029 [WARNING] TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+2026-05-21 01:05:12,880 [INFO]   [sin_LSTM] Test MSE: 0.000196
+2026-05-21 01:05:13,135 [INFO] Plot saved → outputs\case1_sin_LSTM.png
+2026-05-21 01:05:20,644 [WARNING] From D:\Programming\PythonApplications\DLaNN\.venv\Lib\site-packages\keras\src\backend\common\global_state.py:82: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+
+2026-05-21 01:05:20,781 [INFO] --- Signal: sin             | Cell: GRU ---
+2026-05-21 01:05:57,331 [INFO]   [sin_GRU] Test MSE: 0.000222
+2026-05-21 01:05:57,568 [INFO] Plot saved → outputs\case1_sin_GRU.png
+2026-05-21 01:06:01,445 [INFO] --- Signal: cos             | Cell: LSTM ---
+2026-05-21 01:06:56,032 [INFO]   [cos_LSTM] Test MSE: 0.000124
+2026-05-21 01:06:56,296 [INFO] Plot saved → outputs\case1_cos_LSTM.png
+2026-05-21 01:07:02,457 [INFO] --- Signal: cos             | Cell: GRU ---
+2026-05-21 01:07:32,699 [INFO]   [cos_GRU] Test MSE: 0.000531
+2026-05-21 01:07:32,964 [INFO] Plot saved → outputs\case1_cos_GRU.png
+2026-05-21 01:07:45,181 [INFO] --- Signal: sin_plus_cos    | Cell: LSTM ---
+2026-05-21 01:08:27,006 [INFO]   [sin_plus_cos_LSTM] Test MSE: 0.000746
+2026-05-21 01:08:27,265 [INFO] Plot saved → outputs\case1_sin_plus_cos_LSTM.png
+2026-05-21 01:08:30,380 [INFO] --- Signal: sin_plus_cos    | Cell: GRU ---
+2026-05-21 01:10:52,621 [INFO]   [sin_plus_cos_GRU] Test MSE: 0.001183
+2026-05-21 01:10:52,885 [INFO] Plot saved → outputs\case1_sin_plus_cos_GRU.png
+2026-05-21 01:10:56,844 [INFO] Plot saved → outputs\case1_comparison.png
+2026-05-21 01:11:00,109 [INFO] 
+=======================================================
+CASE 2 — Stock Price Prediction
+=======================================================
+2026-05-21 01:11:00,113 [INFO] Loading EQIX stock data …
+2026-05-21 01:11:00,954 [INFO] Full dataset: (851264, 6)  |  unique symbols: 501
+2026-05-21 01:11:01,071 [INFO] EQIX: 1762 trading days | columns: ['open', 'close', 'low', 'high']
+2026-05-21 01:11:01,557 [INFO] Plot saved → outputs\case2_eqix_eda.png
+2026-05-21 01:11:13,516 [INFO] Shapes: x_train=(1394, 19, 4) y_train=(1394, 4) x_valid=(174, 19, 4) y_valid=(174, 4) x_test=(174, 19, 4) y_test=(174, 4)
+2026-05-21 01:11:13,516 [INFO] 
+--- Model: LSTM_Baseline ---
+2026-05-21 01:11:13,638 [INFO] Model: "LSTM_Baseline"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Layer (type)                         ┃ Output Shape                ┃         Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ lstm (LSTM)                          │ (None, 19, 50)              │          11,000 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout (Dropout)                    │ (None, 19, 50)              │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ lstm_1 (LSTM)                        │ (None, 100)                 │          60,400 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_1 (Dropout)                  │ (None, 100)                 │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (Dense)                        │ (None, 4)                   │             404 │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+ Total params: 71,804 (280.48 KB)
+ Trainable params: 71,804 (280.48 KB)
+ Non-trainable params: 0 (0.00 B)
+
+2026-05-21 01:11:33,479 [INFO] [LSTM_Baseline] Test MSE: 0.001350 | Direction accuracy: 61.49%
+2026-05-21 01:11:33,987 [INFO] Plot saved → outputs\case2_lstm_baseline_history.png
+2026-05-21 01:11:39,216 [INFO] Plot saved → outputs\case2_eqix_lstm_baseline.png
+2026-05-21 01:12:13,970 [INFO] Session cleared after LSTM_Baseline
+
+2026-05-21 01:12:13,971 [INFO] 
+--- Model: LSTM_Improved ---
+2026-05-21 01:12:14,346 [INFO] Model: "LSTM_Improved"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Layer (type)                         ┃ Output Shape                ┃         Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ lstm (LSTM)                          │ (None, 19, 128)             │          68,096 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout (Dropout)                    │ (None, 19, 128)             │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ lstm_1 (LSTM)                        │ (None, 19, 64)              │          49,408 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_1 (Dropout)                  │ (None, 19, 64)              │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ lstm_2 (LSTM)                        │ (None, 32)                  │          12,416 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_2 (Dropout)                  │ (None, 32)                  │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (Dense)                        │ (None, 16)                  │             528 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_1 (Dense)                      │ (None, 4)                   │              68 │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+ Total params: 130,516 (509.83 KB)
+ Trainable params: 130,516 (509.83 KB)
+ Non-trainable params: 0 (0.00 B)
+
+2026-05-21 01:13:02,799 [INFO] [LSTM_Improved] Test MSE: 0.002826 | Direction accuracy: 61.49%
+2026-05-21 01:13:03,032 [INFO] Plot saved → outputs\case2_lstm_improved_history.png
+2026-05-21 01:13:07,825 [INFO] Plot saved → outputs\case2_eqix_lstm_improved.png
+2026-05-21 01:13:16,658 [INFO] Session cleared after LSTM_Improved
+
+2026-05-21 01:13:16,658 [INFO] 
+--- Model: GRU ---
+2026-05-21 01:13:16,736 [INFO] Model: "GRU_Model"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Layer (type)                         ┃ Output Shape                ┃         Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ gru (GRU)                            │ (None, 19, 64)              │          13,440 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout (Dropout)                    │ (None, 19, 64)              │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ gru_1 (GRU)                          │ (None, 64)                  │          24,960 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout_1 (Dropout)                  │ (None, 64)                  │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (Dense)                        │ (None, 4)                   │             260 │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+ Total params: 38,660 (151.02 KB)
+ Trainable params: 38,660 (151.02 KB)
+ Non-trainable params: 0 (0.00 B)
+
+2026-05-21 01:13:30,395 [INFO] [GRU] Test MSE: 0.000566 | Direction accuracy: 37.93%
+2026-05-21 01:13:30,637 [INFO] Plot saved → outputs\case2_gru_history.png
+2026-05-21 01:13:34,295 [INFO] Plot saved → outputs\case2_eqix_gru.png
+2026-05-21 01:13:38,264 [INFO] Session cleared after GRU
+
+2026-05-21 01:13:38,265 [INFO] 
+============================================================
+FINAL SUMMARY — Stock Prediction
+============================================================
+2026-05-21 01:13:38,265 [INFO]   Model                 Test MSE     Direction Acc
+2026-05-21 01:13:38,265 [INFO]   --------------------------------------------------
+2026-05-21 01:13:38,266 [INFO]   LSTM_Baseline         0.001350   61.49%
+2026-05-21 01:13:38,266 [INFO]   LSTM_Improved         0.002826   61.49%
+2026-05-21 01:13:38,267 [INFO]   GRU                   0.000566   37.93%
+2026-05-21 01:13:38,267 [INFO] 
+  Best model (MSE): GRU → 0.000566
+2026-05-21 01:13:38,267 [INFO] ============================================================
